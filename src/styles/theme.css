@@ -1,0 +1,69 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
+:root {
+  --primary-900: #0a1929;
+  --primary-800: #102a43;
+  --primary-700: #1e3a5f;
+  --primary-600: #2c5282;
+  --primary-500: #3182ce;
+  --primary-400: #4299e1;
+  --primary-300: #63b3ed;
+  --primary-100: #bee3f8;
+  --primary-50:  #ebf8ff;
+  --accent:      #38b2ac;
+  --warning:     #ed8936;
+  --danger:      #e53e3e;
+  --surface:     #f7fafc;
+  --text-dark:   #1a202c;
+  --text-light:  #ffffff;
+  --shadow-md:   0 4px 6px -1px rgba(0,0,0,0.1), 0 2px 4px -1px rgba(0,0,0,0.06);
+  --shadow-lg:   0 10px 15px -3px rgba(0,0,0,0.1), 0 4px 6px -2px rgba(0,0,0,0.05);
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: 'Inter', sans-serif;
+  background: linear-gradient(135deg, #ebf8ff 0%, #bee3f8 100%);
+  min-height: 100vh;
+  color: var(--text-dark);
+}
+
+/* Botones */
+.btn {
+  padding: 0.75rem 1.5rem;
+  border-radius: 0.5rem;
+  border: none;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-size: 0.95rem;
+}
+.btn-primary {
+  background: var(--primary-500);
+  color: white;
+}
+.btn-primary:hover {
+  background: var(--primary-400);
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-md);
+}
+.btn-accent  { background: var(--accent); color: white; }
+.btn-danger  { background: var(--danger); color: white; }
+.btn-warning { background: var(--warning); color: white; }
+
+/* Inputs */
+.input {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  border: 2px solid var(--primary-100);
+  border-radius: 0.5rem;
+  font-size: 0.95rem;
+  transition: border-color 0.2s;
+  background: white;
+}
+.input:focus {
+  outline: none;
+  border-color: var(--primary-400);
+  box-shadow: 0 0 0 3px rgba(66,153,225,0.15);
+}
