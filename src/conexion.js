@@ -1,5 +1,5 @@
 const {MongoClient}=require('mongodb')
-const url='mongodb+srv://brayangonzalez5599_db_user:QsQGM0sByc0wsBZ9@dbedgetech.2sfvfkf.mongodb.net/'
+const url = process.env.REACT_APP_MONGO_URL;
 const cliente=new MongoClient(url);
 async function conectarBaseDatos()
 {try
