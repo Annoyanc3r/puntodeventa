@@ -5,3 +5,10 @@ const UsuarioSchema = new Schema({
   rol: { type: String, enum: ['admin', 'empleado', 'cajero'], default: 'empleado' },
   activo: { type: Boolean, default: true }
 }, { timestamps: true });
+
+
+
+
+
+
+var owo = 0;
