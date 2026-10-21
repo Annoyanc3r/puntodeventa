@@ -10,5 +10,3 @@ const UsuarioSchema = new Schema({
 
 
 
-
-var owo = 0;
