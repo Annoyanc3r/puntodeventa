@@ -13,30 +13,41 @@ mongoose.connect(process.env.REACT_APP_MONGO_URL)
   .catch(err => console.error('MongoDB no cargo correctamente:', err));
 
 
+// --- Importación de Rutas ---
 const UsuariosRouter = require('./src/Backend/Routes/UsuariosRoute');
-const EmpresaRouter = require('./src/Backend/Routes/EmpresaRoute');
+const EmpresasRouter = require('./src/Backend/Routes/EmpresasRoute');
 const EmpresaUsuarioRouter = require('./src/Backend/Routes/EmpresaUsuarioRoute');
-const SucursalRouter = require('./src/Backend/Routes/SucursalRoute');
+const SucursalesRouter = require('./src/Backend/Routes/SucursalesRoute');
 
+const EmpleadosRouter = require('./src/Backend/Routes/EmpleadosRoute');
+const ClientesRouter = require('./src/Backend/Routes/ClientesRoute');
+const CategoriasRouter = require('./src/Backend/Routes/CategoriasRoute');
+const ProductosRouter = require('./src/Backend/Routes/ProductosRoute');
+const InventarioRouter = require('./src/Backend/Routes/InventarioRoute');
+const MovimientosRouter = require('./src/Backend/Routes/MovimientosInventarioRoute');
+const PedidosRouter = require('./src/Backend/Routes/PedidosRoute');
+const ConfiguracionPOSRouter = require('./src/Backend/Routes/ConfiguracionPOSRoute');
+const MenuPOSRouter = require('./src/Backend/Routes/MenuPOSRoute');
+const SubscripcionesRouter = require('./src/Backend/Routes/SubscripcionesRoute');
+const EmpresaSubscripcionRouter = require('./src/Backend/Routes/EmpresaSubscripcionRoute');
 
-
-app.use('/api/empleados', require('./routes/empleado'));
-app.use('/api/clientes', require('./routes/cliente'));
-app.use('/api/categorias', require('./routes/categoria'));
-app.use('/api/productos', require('./routes/producto'));
-app.use('/api/inventario', require('./routes/inventario'));
-app.use('/api/movimientos', require('./routes/movimientoInventario'));
-app.use('/api/pedidos', require('./routes/pedido'));
-app.use('/api/configuracion-pos', require('./routes/configuracionPos'));
-app.use('/api/menu-pos', require('./routes/menuPos'));
-app.use('/api/subscripciones', require('./routes/subscripcion'));
-app.use('/api/empresa-subscripcion', require('./routes/empresaSubscripcion'));
-
-
+// --- Uso de Rutas (Endpoints) ---
 app.use('/api/usuarios', UsuariosRouter);
-app.use('/api/empresas', EmpresaRouter);
-app.use('/api/empresaUsuario', EmpresaUsuarioRouter);
-app.use('/api/sucursal', SucursalRouter);
+app.use('/api/empresas', EmpresasRouter);
+app.use('/api/empresa-usuario', EmpresaUsuarioRouter);
+app.use('/api/sucursales', SucursalesRouter);
+
+app.use('/api/empleados', EmpleadosRouter);
+app.use('/api/clientes', ClientesRouter);
+app.use('/api/categorias', CategoriasRouter);
+app.use('/api/productos', ProductosRouter);
+app.use('/api/inventario', InventarioRouter);
+app.use('/api/movimientos', MovimientosRouter);
+app.use('/api/pedidos', PedidosRouter);
+app.use('/api/configuracion-pos', ConfiguracionPOSRouter);
+app.use('/api/menu-pos', MenuPOSRouter);
+app.use('/api/subscripciones', SubscripcionesRouter);
+app.use('/api/empresa-subscripcion', EmpresaSubscripcionRouter);
 
 const PORT = process.env.PORT || 4000;
 app.listen(PORT, () => console.log(`🚀 API en http://localhost:${PORT}`));
