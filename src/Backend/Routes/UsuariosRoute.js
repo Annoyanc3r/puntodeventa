@@ -60,7 +60,6 @@ catch(error){
 //Elimina el usuario
 router.delete('/:id', async (req,res)=>{
 
-
     try{
         const usuario_eliminado = await Usuario.findByIdAndDelete(req.params.id);
         res.json({usuario: usuario_eliminado.nombre, id: usuario_eliminado._id, eliminado: 'true'
