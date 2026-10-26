@@ -1,0 +1,7 @@
+# Use this workspace to collaborate
+workspace:
+  id: db68f23b-3b95-44f3-8c9f-da55494ed5e3
+
+localResources:
+  collections:
+    - ../src/Backend/Models/xd.json

@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const { MovimientoInventario } = require('../Models/Movimientoinventario');
+const  MovimientoInventario  = require('../Models/Movimientoinventario');
 
 // Listar movimientos
 router.get('/', async (req, res) => {

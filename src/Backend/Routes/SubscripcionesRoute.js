@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const { Subscripcion } = require('../Models/Subscripcion');
+const  Subscripcion  = require('../Models/Subscripcion');
 
 // Listar subscripciones
 router.get('/', async (req, res) => {
