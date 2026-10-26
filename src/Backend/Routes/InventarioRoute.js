@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const { Inventario } = require('../Models/modelos');
+const { Inventario } = require('../Models/Inventario');
 
 // Listar todo el inventario
 router.get('/', async (req, res) => {

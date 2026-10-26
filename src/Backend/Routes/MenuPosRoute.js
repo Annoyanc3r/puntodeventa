@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const { MenuPOS } = require('../Models/modelos');
+const { MenuPOS } = require('../Models/MenuPOS');
 
 // Listar menú por sucursal
 router.get('/sucursal/:sucursalId', async (req, res) => {

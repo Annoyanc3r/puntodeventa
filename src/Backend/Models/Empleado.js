@@ -8,4 +8,4 @@ const EmpleadoSchema = new mongoose.Schema({
   activo: { type: Boolean, default: true }
 }, { timestamps: true });
 
-module.exports = mongoose.model('Sucursal', EmpleadoSchema);
+module.exports = mongoose.model('Empleado', EmpleadoSchema);

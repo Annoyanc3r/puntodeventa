@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const { Empleado } = require('../Models/modelos'); // Ajusta la ruta a tu archivo
+const { Empleado } = require('../Models/Empleado'); 
 
 // Listar empleados
 router.get('/', async (req, res) => {

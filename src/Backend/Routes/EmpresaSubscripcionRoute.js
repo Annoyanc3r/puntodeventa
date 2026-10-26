@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const { EmpresaSubscripcion } = require('../Models/modelos');
+const { EmpresaSubscripcion } = require('../Models/EmpresaSubscripcion');
 
 // Listar relaciones Empresa-Subscripción
 router.get('/', async (req, res) => {

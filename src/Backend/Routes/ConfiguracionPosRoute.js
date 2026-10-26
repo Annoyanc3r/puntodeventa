@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const { ConfiguracionPos } = require('../Models/modelos');
+const { ConfiguracionPos } = require('../Models/ConfiguracionPOS');
 
 // Obtener configuración por sucursal
 router.get('/sucursal/:sucursalId', async (req, res) => {

@@ -24,18 +24,18 @@ const ClientesRouter = require('./src/Backend/Routes/ClientesRoute');
 const CategoriasRouter = require('./src/Backend/Routes/CategoriasRoute');
 const ProductosRouter = require('./src/Backend/Routes/ProductosRoute');
 const InventarioRouter = require('./src/Backend/Routes/InventarioRoute');
-const MovimientosRouter = require('./src/Backend/Routes/MovimientosInventarioRoute');
+const MovimientosRouter = require('./src/Backend/Routes/MovimientoInventarioRoute');
 const PedidosRouter = require('./src/Backend/Routes/PedidosRoute');
-const ConfiguracionPOSRouter = require('./src/Backend/Routes/ConfiguracionPOSRoute');
-const MenuPOSRouter = require('./src/Backend/Routes/MenuPOSRoute');
+const ConfiguracionPOSRouter = require('./src/Backend/Routes/ConfiguracionPosRoute');
+const MenuPOSRouter = require('./src/Backend/Routes/MenuPosRoute');
 const SubscripcionesRouter = require('./src/Backend/Routes/SubscripcionesRoute');
 const EmpresaSubscripcionRouter = require('./src/Backend/Routes/EmpresaSubscripcionRoute');
 
 // --- Uso de Rutas (Endpoints) ---
-app.use('/api/usuarios', UsuariosRouter);
-app.use('/api/empresas', EmpresasRouter);
-app.use('/api/empresa-usuario', EmpresaUsuarioRouter);
-app.use('/api/sucursales', SucursalesRouter);
+app.use('/api/usuario', UsuariosRouter);
+app.use('/api/empresa', EmpresasRouter);
+app.use('/api/empresaUsuario', EmpresaUsuarioRouter);
+app.use('/api/sucursal', SucursalesRouter);
 
 app.use('/api/empleados', EmpleadosRouter);
 app.use('/api/clientes', ClientesRouter);
