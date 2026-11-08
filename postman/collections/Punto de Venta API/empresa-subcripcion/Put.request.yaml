@@ -1,0 +1,19 @@
+$kind: http-request
+url: http://localhost:4000/api/empresas-subscripciones/6adfda00fbdf8b5024950099
+method: PUT
+body:
+  type: json
+  content: "{\r
+
+    \  \"empresa\": \"6adfa9956384e5dff9a7d9e4\",\r
+
+    \  \"subscripcion\": \"6adfd2cffbdf8b502495004e\",\r
+
+    \  \"fechaFin\": \"2027-12-31T23:59:59.000Z\",\r
+
+    \  \"estado\": \"vencida\",\r
+
+    \  \"pagoReferencia\": \"STRIPE-987654321\"\r
+
+    }"
+order: 3000

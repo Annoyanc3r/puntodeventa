@@ -1,0 +1,19 @@
+$kind: http-request
+url: http://localhost:4000/api/inventario/6adfca76fbdf8b5024950049
+method: PUT
+body:
+  type: json
+  content: "{\r
+
+    \  \"sucursal\": \"6adfaee46384e5dff9a7d9ea\",\r
+
+    \  \"producto\": \"6adfc908fbdf8b5024950048\",\r
+
+    \  \"stock\": 85,\r
+
+    \  \"stockMinimo\": 10,\r
+
+    \  \"precioVenta\": 38\r
+
+    }"
+order: 3000

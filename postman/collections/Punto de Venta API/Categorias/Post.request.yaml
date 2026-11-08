@@ -1,0 +1,13 @@
+$kind: http-request
+url: http://Localhost:4000/api/categorias
+method: POST
+body:
+  type: json
+  content: "{\r
+
+    \  \"nombre\": \"Bebidas\",\r
+
+    \  \"descripcion\": \"Refrescos, aguas frescas y jugos\"\r
+
+    }"
+order: 2000

@@ -1,0 +1,17 @@
+$kind: http-request
+url: http://Localhost:4000/api/Usuario/6af00b67544dafd9703df6d5
+method: PUT
+body:
+  type: json
+  content: "{\r
+
+    \  \"nombre\": \"Angel Rodriguez Actualizado\",\r
+
+    \  \"email\": \"angel.nuevo@example.com\",\r
+
+    \  \"password\": \"password122\",\r
+
+    \  \"rol\": \"admin\"\r
+
+    }"
+order: 3000

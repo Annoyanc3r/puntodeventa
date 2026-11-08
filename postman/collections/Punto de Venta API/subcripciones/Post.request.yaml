@@ -1,0 +1,27 @@
+$kind: http-request
+url: http://Localhost:4000/api/subscripciones
+method: POST
+body:
+  type: json
+  content: "{\r
+
+    \  \"nombre\": \"Plan Premium POS\",\r
+
+    \  \"precio\": 499,\r
+
+    \  \"duracionDias\": 30,\r
+
+    \  \"caracteristicas\": [\r
+
+    \    \"Acceso total al POS\",\r
+
+    \    \"Soporte técnico prioritario\",\r
+
+    \    \"Múltiples sucursales\"\r
+
+    \  ],\r
+
+    \  \"activo\": true\r
+
+    }"
+order: 2000

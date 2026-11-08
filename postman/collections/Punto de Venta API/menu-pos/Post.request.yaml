@@ -1,0 +1,17 @@
+$kind: http-request
+url: http://Localhost:4000/api/menu-pos
+method: POST
+body:
+  type: json
+  content: "{\r
+
+    \  \"sucursal\": \"6adfaee46384e5dff9a7d9ea\",\r
+
+    \  \"producto\": \"6adfc908fbdf8b5024950048\",\r
+
+    \  \"visible\": true,\r
+
+    \  \"orden\": 1\r
+
+    }"
+order: 2000

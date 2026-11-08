@@ -1,0 +1,4 @@
+$kind: http-request
+url: http://Localhost:4000/api/Sucursal
+method: GET
+order: 1000

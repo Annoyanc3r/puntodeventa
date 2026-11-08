@@ -1,0 +1,23 @@
+$kind: http-request
+url: http://localhost:4000/api/configuracion-pos/6adfc800fbdf8b5024950099
+method: PUT
+body:
+  type: json
+  content: "{\r
+
+    \  \"sucursal\": \"6adfaee46384e5dff9a7d9ea\",\r
+
+    \  \"colores\": {\r
+
+    \    \"primario\": \"#0055FF\",\r
+
+    \    \"secundario\": \"#000000\"\r
+
+    \  },\r
+
+    \  \"formatoTicket\": \"58mm\",\r
+
+    \  \"mostrarPropinas\": true\r
+
+    }"
+order: 3000

@@ -1,0 +1,15 @@
+$kind: http-request
+url: http://Localhost:4000/api/empresaUsuario
+method: POST
+body:
+  type: json
+  content: "{\r
+
+    \  \"empresa\": \"6adfa8706384e5dff9a7d9e6\",\r
+
+    \  \"usuario\": \"6adfa9de6384e5dff9a7d9e7\",\r
+
+    \  \"rolEnEmpresa\": \"admin\"\r
+
+    }"
+order: 2000

@@ -1,0 +1,13 @@
+$kind: http-request
+url: http://localhost:4000/api/empresa/6adfa8706384e5dff9a7d9e6
+method: PUT
+body:
+  type: json
+  content: "{\r
+
+    \  \"nombre\": \"Tacos El Don Viejon MTY Sucursal San Pedro\",\r
+
+    \  \"rfc\": \"YXZ123456XYZ\"\r
+
+    }"
+order: 3000

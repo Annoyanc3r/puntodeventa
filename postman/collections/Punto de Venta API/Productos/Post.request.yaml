@@ -1,0 +1,19 @@
+$kind: http-request
+url: http://Localhost:4000/api/productos
+method: POST
+body:
+  type: json
+  content: "{\r
+
+    \  \"categoria\": \"6adfc745fbdf8b5024950047\",\r
+
+    \  \"nombre\": \"cebolla asada\",\r
+
+    \  \"descripcion\": \"Cebolla asada al carbón con sazón especial\",\r
+
+    \  \"precioBase\": 28,\r
+
+    \  \"imagen\": \"https://example.com/cebolla.jpg\"\r
+
+    }"
+order: 2000

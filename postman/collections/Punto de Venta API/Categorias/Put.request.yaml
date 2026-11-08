@@ -1,0 +1,15 @@
+$kind: http-request
+url: http://localhost:4000/api/categorias/6adfc745fbdf8b5024950047
+method: PUT
+body:
+  type: json
+  content: "{\r
+
+    \  \"nombre\": \"Bebidas Frías\",\r
+
+    \  \"descripcion\": \"Refrescos, aguas preparadas y embotelladas\",\r
+
+    \  \"activo\": true\r
+
+    }"
+order: 3000

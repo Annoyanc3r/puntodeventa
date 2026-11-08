@@ -1,0 +1,13 @@
+$kind: http-request
+url: http://Localhost:4000/api/empresa
+method: POST
+body:
+  type: json
+  content: "{\r
+
+    \  \"nombre\": \"Tacos El Don Viejon MTY\",\r
+
+    \  \"rfc\": \"YXZ123456ABC\"\r
+
+    }"
+order: 2000

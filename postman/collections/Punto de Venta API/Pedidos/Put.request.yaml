@@ -1,0 +1,53 @@
+$kind: http-request
+url: http://localhost:4000/api/pedidos/6adfd1b1fbdf8b502495004b
+method: PUT
+body:
+  type: json
+  content: "{\r
+
+    \  \"sucursal\": \"6adfaee46384e5dff9a7d9ea\",\r
+
+    \  \"cliente\": \"6adfc61ffbdf8b5024950046\",\r
+
+    \  \"empleado\": \"6adfc4c6fbdf8b5024950045\",\r
+
+    \  \"estado\": \"listo\",\r
+
+    \  \"total\": 94,\r
+
+    \  \"detalles\": [\r
+
+    \    {\r
+
+    \      \"producto\": \"6adfc908fbdf8b5024950048\",\r
+
+    \      \"nombreProducto\": \"cebolla asada\",\r
+
+    \      \"cantidad\": 3,\r
+
+    \      \"precioUnitario\": 28,\r
+
+    \      \"subtotal\": 84,\r
+
+    \      \"notas\": \"sin cebolla extra\"\r
+
+    \    }\r
+
+    \  ],\r
+
+    \  \"pagos\": [\r
+
+    \    {\r
+
+    \      \"metodo\": \"tarjeta\",\r
+
+    \      \"monto\": 94,\r
+
+    \      \"referencia\": \"REF-12345\"\r
+
+    \    }\r
+
+    \  ]\r
+
+    }"
+order: 3000

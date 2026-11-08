@@ -1,0 +1,17 @@
+$kind: http-request
+url: http://localhost:4000/api/empleados/6adfc4c6fbdf8b5024950045
+method: PUT
+body:
+  type: json
+  content: "{\r
+
+    \  \"sucursal\": \"6adfaee46384e5dff9a7d9ea\",\r
+
+    \  \"usuario\": \"6adfa9de6384e5dff9a7d9e7\",\r
+
+    \  \"nombre\": \"angel rodriguez\",\r
+
+    \  \"puesto\": \"encargado de turno\"\r
+
+    }"
+order: 3000

@@ -1,0 +1,17 @@
+$kind: http-request
+url: http://Localhost:4000/api/empleados
+method: POST
+body:
+  type: json
+  content: "{\r
+
+    \  \"sucursal\": \"6adfaee46384e5dff9a7d9ea\",\r
+
+    \  \"usuario\": \"6adfa9de6384e5dff9a7d9e7\",\r
+
+    \  \"nombre\": \"angel rodriguez\",\r
+
+    \  \"puesto\": \"mesero\"\r
+
+    }"
+order: 2000

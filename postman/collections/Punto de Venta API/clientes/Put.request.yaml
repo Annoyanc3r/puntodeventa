@@ -1,0 +1,17 @@
+$kind: http-request
+url: http://localhost:4000/api/clientes/6adfc61ffbdf8b5024950046
+method: PUT
+body:
+  type: json
+  content: "{\r
+
+    \  \"nombre\": \"Juan Pérez García\",\r
+
+    \  \"email\": \"juan.perez@example.com\",\r
+
+    \  \"telefono\": \"8187654321\",\r
+
+    \  \"direccion\": \"Av. Gonzalitos 456 Int. 2\"\r
+
+    }"
+order: 3000

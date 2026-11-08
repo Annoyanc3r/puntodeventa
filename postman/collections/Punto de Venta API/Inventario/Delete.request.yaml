@@ -1,0 +1,4 @@
+$kind: http-request
+url: http://localhost:4000/api/inventario/6adfca76fbdf8b5024950049
+method: DELETE
+order: 4000
