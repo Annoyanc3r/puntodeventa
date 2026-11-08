@@ -1,4 +1,4 @@
-const EmpresaSubcripcion = require('../Models/EmpresasSubcripcion');
+const EmpresaSubcripcion = require('../Models/EmpresaSubscripcion');
 
 // Listar relaciones Empresa-Subscripción
 const listarEmpresaSubcripciones = async (req, res) => {
