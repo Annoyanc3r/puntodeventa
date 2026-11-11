@@ -1,12 +1,19 @@
 {
   "name": "puntodeventa",
   "version": "0.1.0",
+  "homepage": "/",
   "private": true,
   "dependencies": {
     "@testing-library/dom": "^10.4.2",
     "@testing-library/jest-dom": "^6.9.1",
     "@testing-library/react": "^16.3.3",
     "@testing-library/user-event": "^13.5.0",
+<<<<<<< Updated upstream
+=======
+    "bcryptjs": "^3.0.3",
+    "cors": "^2.8.6",
+    "jsonwebtoken": "^9.0.3",
+>>>>>>> Stashed changes
     "mongodb": "^7.7.0",
     "react": "^19.3.0",
     "react-dom": "^19.3.0",
