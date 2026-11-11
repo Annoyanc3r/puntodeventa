@@ -1,5 +1,6 @@
 const Usuario = require('../Models/Usuarios');
-
+const bcrypt = require('bcryptjs');
+const jwt = require('jsonwebtoken');
 // Obtener todos los usuarios
 const listarUsuarios = async (req, res) => {
     try {
@@ -55,10 +56,54 @@ const eliminarUsuario = async (req, res) => {
     }
 };
 
+const loginUsuario = async (req, res) => {
+  try {
+    const { email, password } = req.body;
+
+    // 1. Validar que vengan los datos
+    if (!email || !password) {
+      return res.status(400).json({ msg: 'Email y contraseña son obligatorios' });
+    }
+
+    // 2. Buscar usuario por email (OJO: por defecto select('-password')
+    //    en otros endpoints, aquí SÍ lo necesitamos)
+    const usuario = await Usuario.findOne({ email: email.toLowerCase() });
+    if (!usuario) {
+      return res.status(401).json({ msg: 'Credenciales inválidas' });
+    }
+
+    // 3. Comparar contraseña
+    const passwordOk = await bcrypt.compare(password, usuario.password);
+    if (!passwordOk) {
+      return res.status(401).json({ msg: 'Credenciales inválidas' });
+    }
+
+    // 4. Generar token
+    const token = jwt.sign(
+      { id: usuario._id, email: usuario.email, rol: usuario.rol },
+      process.env.JWT_SECRET,
+      { expiresIn: '7d' }
+    );
+
+    res.json({
+      token,
+      usuario: {
+        _id: usuario._id,
+        nombre: usuario.nombre,
+        email: usuario.email,
+        rol: usuario.rol,
+      },
+    });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
+
 module.exports = {
-    listarUsuarios,
-    obtenerUsuarioPorId,
-    crearUsuario,
-    actualizarUsuario,
-    eliminarUsuario
+  listarUsuarios,
+  obtenerUsuarioPorId,
+  crearUsuario,
+  actualizarUsuario,
+  eliminarUsuario,
+  loginUsuario, // ← nuevo
 };

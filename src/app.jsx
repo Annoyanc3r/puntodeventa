@@ -7,9 +7,11 @@ import BranchesPage from './pages/BranchesPage';
 import SettingsPage from './pages/SettingsPage';
 import LoginPage from './pages/LoginPage';
 import RegisterPage from './pages/RegisterPage';
-import './styles/theme.css';
+import ProtectedRoute from './components/ProtectedRoute';
 import SubscriptionsPage from './pages/SubscriptionsPage';
 
+
+import './styles/theme.css';
 export default function App() {
   return (
     <CartProvider>

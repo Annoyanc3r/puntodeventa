@@ -5,8 +5,12 @@ const {
     obtenerUsuarioPorId,
     crearUsuario,
     actualizarUsuario,
-    eliminarUsuario
+    eliminarUsuario,
+    loginUsuario
 } = require('../Controllers/UsuarioController');
+
+
+router.post('/login', loginUsuario); 
 
 router.get('/', listarUsuarios);
 router.get('/:id', obtenerUsuarioPorId);
