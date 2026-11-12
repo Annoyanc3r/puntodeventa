@@ -5,7 +5,7 @@ const UsuarioSchema = new mongoose.Schema({
   nombre: { type: String, required: true },
   email: { type: String, required: true, unique: true, lowercase: true },
   password: { type: String, required: true },
-  rol: { type: String, default: 'cajero' },
+  rol: { type: String, default: 'admin' },
 }, { timestamps: true });
 
 UsuarioSchema.pre('save', async function () {

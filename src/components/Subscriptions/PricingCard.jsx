@@ -8,6 +8,7 @@ export default function PricingCard({
   highlight = false,
   popular = false,
   buttonLabel = 'Sign Up',
+  onSelect, // 1. Recibir la función como prop
 }) {
   return (
     <div
@@ -31,20 +32,6 @@ export default function PricingCard({
         flexDirection: 'column',
         height: '100%',
         overflow: 'hidden',
-      }}
-      onMouseEnter={(e) => {
-        if (!highlight) {
-          e.currentTarget.style.transform = 'translateY(-6px)';
-          e.currentTarget.style.boxShadow = '0 20px 40px -10px rgba(49, 130, 206, 0.25)';
-          e.currentTarget.style.borderColor = 'var(--primary-300)';
-        }
-      }}
-      onMouseLeave={(e) => {
-        if (!highlight) {
-          e.currentTarget.style.transform = 'translateY(0)';
-          e.currentTarget.style.boxShadow = '0 10px 25px -5px rgba(0, 0, 0, 0.08)';
-          e.currentTarget.style.borderColor = 'var(--primary-100)';
-        }
       }}
     >
       {/* Badge Popular */}
@@ -181,9 +168,10 @@ export default function PricingCard({
         ))}
       </ul>
 
-      {/* Botón */}
+      {/* Botón con onClick conectado */}
       <button
         className={highlight ? 'btn btn-accent' : 'btn btn-primary'}
+        onClick={onSelect} // 2. Conectar el evento click
         style={{
           width: '100%',
           padding: '1rem',
@@ -192,6 +180,7 @@ export default function PricingCard({
           letterSpacing: '0.5px',
           fontSize: '0.95rem',
           transition: 'all 0.2s ease',
+          cursor: 'pointer',
         }}
       >
         {buttonLabel}

@@ -1,11 +1,11 @@
-import { NavLink } from 'react-router-dom';
+import { NavLink, useNavigate } from 'react-router-dom';
 import { 
   FiShoppingCart, FiBox, FiMapPin, FiSettings, 
   FiLogOut, FiCreditCard 
 } from 'react-icons/fi';
 
 const links = [
-  { to: '/pos',           label: 'Punto de Venta', icon: <FiShoppingCart /> },
+  { to: '/pos',        label: 'Punto de Venta', icon: <FiShoppingCart /> },
   { to: '/inventario',    label: 'Inventario',     icon: <FiBox /> },
   { to: '/sucursales',    label: 'Sucursales',     icon: <FiMapPin /> },
   { to: '/suscripciones', label: 'Suscripciones',  icon: <FiCreditCard /> },
@@ -13,6 +13,14 @@ const links = [
 ];
 
 export default function Sidebar() {
+  const navigate = useNavigate();
+
+  const handleLogout = () => {
+    localStorage.removeItem('token');
+    localStorage.removeItem('usuario');
+    navigate('/login');
+  };
+
   return (
     <aside style={{
       width: '260px',
@@ -102,11 +110,13 @@ export default function Sidebar() {
       <div style={{ padding: '1rem 1.5rem 0', borderTop: '1px solid rgba(255,255,255,0.08)' }}>
         <button
           className="btn"
+          onClick={handleLogout}
           style={{
             width: '100%',
             background: 'rgba(229, 62, 62, 0.15)',
             color: '#fc8181',
             border: '1px solid rgba(229, 62, 62, 0.3)',
+            cursor: 'pointer',
           }}
         >
           <FiLogOut /> Cerrar Sesión

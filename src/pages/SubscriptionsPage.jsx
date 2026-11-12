@@ -45,6 +45,38 @@ export default function SubscriptionsPage() {
     },
   ];
 
+  // Función para manejar la compra o contratación del plan
+  const handleSubscribe = async (plan) => {
+    try {
+      const token = localStorage.getItem('token');
+      const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:4000';
+
+      const response = await fetch(`${apiUrl}/api/empresa-subscripcion`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          ...(token ? { 'Authorization': `Bearer ${token}` } : {})
+        },
+        body: JSON.stringify({
+          plan: plan.title,
+          precio: plan.price,
+          periodo: plan.period,
+        }),
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        alert(`¡Te has suscrito exitosamente al plan: ${plan.title}!`);
+      } else {
+        alert(`No se pudo procesar la suscripción: ${data.error || data.msg || 'Error desconocido'}`);
+      }
+    } catch (error) {
+      console.error('Error de conexión:', error);
+      alert('Error al conectar con el servidor backend.');
+    }
+  };
+
   return (
     <div
       style={{
@@ -150,7 +182,7 @@ export default function SubscriptionsPage() {
           </p>
         </div>
 
-        {/* Grid de planes */}
+        {/* Grid de planes pasándoles la función handleSubscribe */}
         <div
           style={{
             display: 'grid',
@@ -161,7 +193,11 @@ export default function SubscriptionsPage() {
           }}
         >
           {plans.map((plan, i) => (
-            <PricingCard key={i} {...plan} />
+            <PricingCard
+              key={i}
+              {...plan}
+              onSelect={() => handleSubscribe(plan)}
+            />
           ))}
         </div>
 
@@ -201,33 +237,6 @@ export default function SubscriptionsPage() {
               {item.text}
             </div>
           ))}
-        </div>
-
-        {/* Preguntas frecuentes mini */}
-        <div style={{ marginTop: '4rem', textAlign: 'center' }}>
-          <h2
-            style={{
-              fontSize: '1.75rem',
-              fontWeight: 700,
-              color: 'var(--primary-800)',
-              marginBottom: '0.75rem',
-            }}
-          >
-            ¿Tienes dudas?
-          </h2>
-          <p style={{ color: '#718096', marginBottom: '1.5rem' }}>
-            Nuestro equipo está listo para ayudarte a elegir el plan ideal.
-          </p>
-          <button
-            className="btn btn-primary"
-            style={{
-              padding: '0.9rem 2rem',
-              borderRadius: '2rem',
-              fontSize: '0.95rem',
-            }}
-          >
-            Contactar con Ventas
-          </button>
         </div>
       </div>
     </div>
