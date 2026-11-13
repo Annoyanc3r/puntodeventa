@@ -22,7 +22,7 @@ export default function App() {
             <Route path="/sucursales" element={<BranchesPage />} />
             <Route path="/suscripciones" element={<SubscriptionsPage />} />
             <Route path="/ajustes" element={<SettingsPage />} />
-            <Route path="/" element={<Navigate to="/pos" />} />
+            <Route path="/" element={<Navigate to="/login" />} />
           </Route>
         </Routes>
       </BrowserRouter>

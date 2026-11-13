@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { FiMail, FiLock, FiLogIn } from 'react-icons/fi';
-import { login } from '../services/authService';
+import { login, verificarSubscripcion } from '../services/authService';
 
 export default function LoginPage() {
   const navigate = useNavigate();
@@ -14,11 +14,27 @@ export default function LoginPage() {
     e.preventDefault();
     setError(null);
     setCargando(true);
+
     try {
+      // 1. Login
       const { token, usuario } = await login(email, password);
       localStorage.setItem('token', token);
       localStorage.setItem('usuario', JSON.stringify(usuario));
-      navigate('/pos', { replace: true });
+
+      // 2. Verificar suscripción (si falla, asumimos que no tiene)
+      let activa = false;
+      try {
+        const r = await verificarSubscripcion(email);
+        console.log("aaaa");
+        activa = r.activa;
+      } catch (subErr) {
+        console.warn('No se pudo verificar suscripción:', subErr.message);
+        activa = false;
+      }
+      localStorage.setItem('tieneSubscripcion', String(activa));
+
+      // 3. Redirigir
+      navigate(activa ? '/pos' : '/suscripciones', { replace: true });
     } catch (err) {
       setError(err.message);
     } finally {
@@ -27,9 +43,6 @@ export default function LoginPage() {
   };
 
   return (
-
-
-    
     <div style={authContainer}>
       <div style={authCard}>
         <div style={{ textAlign: 'center', marginBottom: '2rem' }}>
@@ -75,7 +88,15 @@ export default function LoginPage() {
           </div>
 
           {error && (
-            <div style={{ background: '#fed7d7', color: '#c53030', padding: '0.6rem 0.8rem', borderRadius: '0.5rem', fontSize: '0.85rem' }}>
+            <div
+              style={{
+                background: '#fed7d7',
+                color: '#c53030',
+                padding: '0.6rem 0.8rem',
+                borderRadius: '0.5rem',
+                fontSize: '0.85rem',
+              }}
+            >
               {error}
             </div>
           )}
@@ -118,8 +139,7 @@ export default function LoginPage() {
   );
 }
 
-
-
+// ================= ESTILOS (fuera del componente) =================
 const authContainer = {
   minHeight: '100vh',
   display: 'flex',
@@ -153,5 +173,3 @@ const inputIcon = {
   transform: 'translateY(-50%)',
   color: '#a0aec0',
 };
-
-// ...tus estilos authContainer, authCard, labelStyle, inputIcon sin cambios

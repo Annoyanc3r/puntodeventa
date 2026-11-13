@@ -157,6 +157,51 @@ const loginUsuario = async (req, res) => {
   }
 };
 
+
+// Verificar si un usuario tiene suscripción activa
+const verificarSubscripcion = async (req, res) => {
+  try {
+    // Acepta email o id por param. Ej: /api/usuario/subscripcion/:email
+    const { email } = req.params;
+
+    if (!email) {
+      return res.status(400).json({ activa: false, msg: 'Email requerido' });
+    }
+
+    // 1. Buscar usuario
+    const usuario = await Usuario.findOne({ email: email.toLowerCase() });
+    if (!usuario) {
+      return res.status(404).json({ activa: false, msg: 'Usuario no encontrado' });
+    }
+
+    // 2. Buscar relaciones EmpresaUsuario del usuario
+    const relaciones = await EmpresaUsuario.find({ usuario: usuario._id });
+
+    if (!relaciones.length) {
+      return res.json({ activa: false, msg: 'El usuario no tiene empresas asociadas' });
+    }
+
+    // 3. Obtener los _id de las empresas
+    const empresaIds = relaciones.map((r) => r.empresa);
+
+    // 4. Buscar suscripción activa y no vencida
+    const ahora = new Date();
+    const subscripcionActiva = await EmpresaSubscripcion.findOne({
+      empresa: { $in: empresaIds },
+      estado: 'activa',
+      fechaFin: { $gte: ahora },
+    });
+
+    return res.json({
+      activa: !!subscripcionActiva,
+      subscripcion: subscripcionActiva || null,
+    });
+  } catch (error) {
+    res.status(500).json({ activa: false, error: error.message });
+  }
+};
+
+
 module.exports = {
   listarUsuarios,
   obtenerUsuarioPorId,
@@ -164,4 +209,5 @@ module.exports = {
   actualizarUsuario,
   eliminarUsuario,
   loginUsuario, // ← nuevo
+  verificarSubscripcion, //Sirve para listar y checar los usuarios que ya tienen subscripcion
 };
