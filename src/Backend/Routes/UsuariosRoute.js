@@ -13,7 +13,7 @@ const {
 
 router.post('/login', loginUsuario); 
 
-router.get('/:usuario:correo', verificarSubscripcion);
+router.get('/:correo', verificarSubscripcion);
 
 router.get('/', listarUsuarios);
 router.get('/:id', obtenerUsuarioPorId);

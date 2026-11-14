@@ -33,7 +33,7 @@ export const register = async ({ nombre, email, password }) => {
 };
 
 export const verificarSubscripcion = async (email) => {
-  console.log("asdasd");
+ 
   const res = await fetch(`${API}/${encodeURIComponent(email)}`);
   const data = await res.json();
   if (!res.ok) throw new Error(data.msg || data.error || 'Error al verificar suscripción');

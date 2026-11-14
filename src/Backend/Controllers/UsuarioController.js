@@ -1,6 +1,6 @@
 //const Usuario = require('../Models/Usuarios');
 //const bcrypt = require('bcryptjs');
-
+const util = require('util');
 
 const Usuario = require ('../Models/Usuarios');
 const Empresa = require ('../Models/Empresa');
@@ -9,6 +9,7 @@ const EmpresaSubscripcion = require ('../Models/EmpresaSubscripcion');
 const Subscripcion = require ('../Models/Subscripcion');
 const bcrypt = require ('bcryptjs');
 const jwt = require('jsonwebtoken');
+const { stringify } = require('querystring');
 
 // Obtener todos los usuarios
 const listarUsuarios = async (req, res) => {
@@ -161,17 +162,30 @@ const loginUsuario = async (req, res) => {
 // Verificar si un usuario tiene suscripción activa
 const verificarSubscripcion = async (req, res) => {
   try {
-    // Acepta email o id por param. Ej: /api/usuario/subscripcion/:email
-    const { email } = req.params;
 
-    if (!email) {
+   
+    // Acepta email o id por param. Ej: /api/usuario/subscripcion/:email
+    const { email } = req.params.correo;
+
+    console.log('=== REQ DEBUG ===');
+    console.log(util.inspect({
+      params: req.params
+    }, { depth: 5, colors: true }));
+    console.log('=================');
+
+    
+    
+    if (!req.params.correo) {
       return res.status(400).json({ activa: false, msg: 'Email requerido' });
     }
 
     // 1. Buscar usuario
-    const usuario = await Usuario.findOne({ email: email.toLowerCase() });
+    const usuario = await Usuario.findOne({ email: req.params.correo.toLowerCase() });
+
     if (!usuario) {
+      console.log('usuario no encontrado');
       return res.status(404).json({ activa: false, msg: 'Usuario no encontrado' });
+     
     }
 
     // 2. Buscar relaciones EmpresaUsuario del usuario

@@ -25,9 +25,10 @@ export default function LoginPage() {
       let activa = false;
       try {
         const r = await verificarSubscripcion(email);
-        console.log("aaaa");
+        
         activa = r.activa;
       } catch (subErr) {
+       
         console.warn('No se pudo verificar suscripción:', subErr.message);
         activa = false;
       }
