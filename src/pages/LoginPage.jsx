@@ -36,7 +36,7 @@ export default function LoginPage() {
           <h1 style={{ fontSize: '2rem', fontWeight: 700, color: 'var(--primary-800)' }}>
             <span style={{ color: 'var(--primary-500)' }}>POS</span> Blue
           </h1>
-          <p style={{ color: '#718096', marginTop: '0.5rem' }}>Inicia sesión en tu cuenta</p>
+          <p style={{ color: '#5d78a0', marginTop: '0.5rem' }}>Inicia sesión en tu cuenta</p>
         </div>
 
         <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
@@ -126,7 +126,7 @@ const authContainer = {
   alignItems: 'center',
   justifyContent: 'center',
   padding: '2rem',
-  background: 'linear-gradient(135deg, #ebf8ff 0%, #bee3f8 50%, #90cdf4 100%)',
+  background:  '#8bc0dc',
 };
 
 const authCard = {

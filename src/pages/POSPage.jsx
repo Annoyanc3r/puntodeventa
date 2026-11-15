@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { categories, products } from '../data/products';
 import { useCart } from '../context/CartContext';
+import { getProductIcon } from '../data/productIcons';
 import { FiSearch, FiPlus, FiMinus, FiTrash2, FiCreditCard, FiDollarSign, FiPrinter } from 'react-icons/fi';
 
 export default function POSPage() {
@@ -19,7 +20,6 @@ export default function POSPage() {
       gridTemplateColumns: '1fr 400px',
       gap: '1.5rem',
       height: 'calc(100vh - 140px)',
-      animation: 'fadeIn 0.4s ease',
     }}>
 
       {/* Columna izquierda */}
@@ -62,9 +62,7 @@ export default function POSPage() {
                 fontSize: '0.85rem',
                 whiteSpace: 'nowrap',
                 fontFamily: 'inherit',
-                background: activeCategory === cat
-                  ? 'linear-gradient(135deg, #3182ce, #2c5282)'
-                  : 'white',
+                background: activeCategory === cat ? '#3182ce' : 'white',
                 color: activeCategory === cat ? 'white' : '#2c5282',
                 boxShadow: activeCategory === cat
                   ? '0 6px 16px rgba(49,130,206,0.35)'
@@ -87,66 +85,65 @@ export default function POSPage() {
           paddingRight: '0.5rem',
           paddingBottom: '1rem',
         }}>
-          {filtered.map((product, i) => (
-            <div
-              key={product.id}
-              onClick={() => addToCart(product)}
-              className="animate-pop-in"
-              style={{
-                animationDelay: `${i * 0.03}s`,
-                background: 'white',
-                borderRadius: '1rem',
-                padding: '0.85rem',
-                cursor: 'pointer',
-                boxShadow: '0 4px 12px rgba(0,0,0,0.06)',
-                transition: 'all 0.25s cubic-bezier(0.4,0,0.2,1)',
-                border: '2px solid transparent',
-              }}
-              onMouseEnter={e => {
-                e.currentTarget.style.transform = 'translateY(-6px)';
-                e.currentTarget.style.boxShadow = '0 16px 32px rgba(49,130,206,0.18)';
-                e.currentTarget.style.borderColor = '#63b3ed';
-              }}
-              onMouseLeave={e => {
-                e.currentTarget.style.transform = 'translateY(0)';
-                e.currentTarget.style.boxShadow = '0 4px 12px rgba(0,0,0,0.06)';
-                e.currentTarget.style.borderColor = 'transparent';
-              }}
-            >
-              <div style={{
-                height: '110px',
-                borderRadius: '0.75rem',
-                background: 'linear-gradient(135deg, #ebf8ff, #bee3f8)',
-                display: 'flex', alignItems: 'center', justifyContent: 'center',
-                fontSize: '3rem',
-                marginBottom: '0.75rem',
-                position: 'relative',
-                overflow: 'hidden',
-              }}>
-                <span style={{ position: 'relative', zIndex: 1 }}>{product.image}</span>
-              </div>
-              <h4 style={{
-                fontSize: '0.85rem', fontWeight: 600,
-                color: '#1e3a5f', marginBottom: '0.35rem',
-                lineHeight: 1.3,
-              }}>
-                {product.name}
-              </h4>
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                <p style={{ fontSize: '1.1rem', fontWeight: 800, color: '#3182ce' }}>
-                  ${product.price.toFixed(2)}
-                </p>
+          {filtered.map((product) => {
+            const { Icon, color } = getProductIcon(product);
+
+            return (
+              <div
+                key={product.id}
+                onClick={() => addToCart(product)}
+                style={{
+                  background: 'white',
+                  borderRadius: '1rem',
+                  padding: '0.85rem',
+                  cursor: 'pointer',
+                  boxShadow: '0 4px 12px rgba(0,0,0,0.06)',
+                  transition: 'all 0.25s cubic-bezier(0.4,0,0.2,1)',
+                  border: '2px solid transparent',
+                }}
+                onMouseEnter={e => {
+                  e.currentTarget.style.transform = 'translateY(-6px)';
+                  e.currentTarget.style.boxShadow = '0 16px 32px rgba(49,130,206,0.18)';
+                  e.currentTarget.style.borderColor = '#63b3ed';
+                }}
+                onMouseLeave={e => {
+                  e.currentTarget.style.transform = 'translateY(0)';
+                  e.currentTarget.style.boxShadow = '0 4px 12px rgba(0,0,0,0.06)';
+                  e.currentTarget.style.borderColor = 'transparent';
+                }}
+              >
                 <div style={{
-                  width: '28px', height: '28px', borderRadius: '8px',
-                  background: 'linear-gradient(135deg, #4299e1, #3182ce)',
+                  height: '110px',
+                  borderRadius: '0.75rem',
+                  background: '#ebf8ff',
                   display: 'flex', alignItems: 'center', justifyContent: 'center',
-                  color: 'white', boxShadow: '0 2px 6px rgba(49,130,206,0.3)',
+                  marginBottom: '0.75rem',
                 }}>
-                  <FiPlus size={14} />
+                  <Icon size={56} color={color} />
+                </div>
+                <h4 style={{
+                  fontSize: '0.85rem', fontWeight: 600,
+                  color: '#1e3a5f', marginBottom: '0.35rem',
+                  lineHeight: 1.3,
+                }}>
+                  {product.name}
+                </h4>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                  <p style={{ fontSize: '1.1rem', fontWeight: 800, color: '#3182ce' }}>
+                    ${product.price.toFixed(2)}
+                  </p>
+                  <div style={{
+                    width: '28px', height: '28px', borderRadius: '8px',
+                    background: '#4299e1',
+                    display: 'flex', alignItems: 'center', justifyContent: 'center',
+                    color: 'white', boxShadow: '0 2px 6px rgba(49,130,206,0.3)',
+                  }}>
+                    <FiPlus size={14} />
+                  </div>
                 </div>
               </div>
-            </div>
-          ))}
+            );
+          })}
 
           {filtered.length === 0 && (
             <div style={{
@@ -171,21 +168,14 @@ export default function POSPage() {
         display: 'flex',
         flexDirection: 'column',
         overflow: 'hidden',
-        border: '1px solid rgba(190,227,248,0.6)',
+        border: '1px solid #bee3f8',
       }}>
         <div style={{
           padding: '1.5rem 1.5rem 1.25rem',
-          background: 'linear-gradient(135deg, #2c5282, #3182ce)',
+          background: '#2c5282',
           color: 'white',
-          position: 'relative',
-          overflow: 'hidden',
         }}>
-          <div style={{
-            position: 'absolute', top: '-40px', right: '-40px',
-            width: '120px', height: '120px', borderRadius: '50%',
-            background: 'radial-gradient(circle, rgba(255,255,255,0.15), transparent)',
-          }} />
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', position: 'relative' }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
             <div>
               <h3 style={{ fontSize: '1.1rem', fontWeight: 700 }}>🛒 Orden Actual</h3>
               <p style={{ fontSize: '0.8rem', opacity: 0.85, marginTop: '0.25rem' }}>
@@ -212,74 +202,74 @@ export default function POSPage() {
         <div style={{ flex: 1, overflowY: 'auto', padding: '1rem' }}>
           {cart.length === 0 ? (
             <div style={{ textAlign: 'center', padding: '3rem 1rem', color: '#a0aec0' }}>
-              <div style={{
-                fontSize: '4rem', marginBottom: '1rem',
-                filter: 'grayscale(0.3)', opacity: 0.7,
-              }}>🛒</div>
+              <div style={{ fontSize: '4rem', marginBottom: '1rem', opacity: 0.7 }}>🛒</div>
               <p style={{ fontWeight: 600, color: '#718096' }}>Carrito vacío</p>
               <p style={{ fontSize: '0.85rem', marginTop: '0.5rem', color: '#a0aec0' }}>
                 Agrega productos para comenzar
               </p>
             </div>
           ) : (
-            cart.map(item => (
-              <div key={item.id} className="animate-slide-in" style={{
-                display: 'flex', alignItems: 'center', gap: '0.75rem',
-                padding: '0.85rem',
-                borderRadius: '0.85rem',
-                marginBottom: '0.6rem',
-                background: 'linear-gradient(135deg, #f7fbff, #ebf8ff)',
-                border: '1px solid rgba(190,227,248,0.6)',
-              }}>
-                <div style={{
-                  fontSize: '1.75rem',
-                  width: '44px', height: '44px',
-                  borderRadius: '0.65rem',
-                  background: 'white',
-                  display: 'flex', alignItems: 'center', justifyContent: 'center',
-                  boxShadow: '0 2px 6px rgba(0,0,0,0.06)',
-                  flexShrink: 0,
+            cart.map(item => {
+              const { Icon, color } = getProductIcon(item);
+
+              return (
+                <div key={item.id} style={{
+                  display: 'flex', alignItems: 'center', gap: '0.75rem',
+                  padding: '0.85rem',
+                  borderRadius: '0.85rem',
+                  marginBottom: '0.6rem',
+                  background: '#f7fbff',
+                  border: '1px solid #bee3f8',
                 }}>
-                  {item.image}
-                </div>
-                <div style={{ flex: 1, minWidth: 0 }}>
-                  <p style={{
-                    fontWeight: 600, fontSize: '0.85rem', color: '#1e3a5f',
-                    whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis',
+                  <div style={{
+                    width: '44px', height: '44px',
+                    borderRadius: '0.65rem',
+                    background: 'white',
+                    display: 'flex', alignItems: 'center', justifyContent: 'center',
+                    boxShadow: '0 2px 6px rgba(0,0,0,0.06)',
+                    flexShrink: 0,
                   }}>
-                    {item.name}
-                  </p>
-                  <p style={{ fontSize: '0.85rem', color: '#3182ce', fontWeight: 700, marginTop: '0.15rem' }}>
-                    ${(item.price * item.qty).toFixed(2)}
-                  </p>
+                    <Icon size={22} color={color} />
+                  </div>
+                  <div style={{ flex: 1, minWidth: 0 }}>
+                    <p style={{
+                      fontWeight: 600, fontSize: '0.85rem', color: '#1e3a5f',
+                      whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis',
+                    }}>
+                      {item.name}
+                    </p>
+                    <p style={{ fontSize: '0.85rem', color: '#3182ce', fontWeight: 700, marginTop: '0.15rem' }}>
+                      ${(item.price * item.qty).toFixed(2)}
+                    </p>
+                  </div>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.3rem' }}>
+                    <button onClick={() => updateQty(item.id, item.qty - 1)} style={qtyBtn}>
+                      <FiMinus size={11} />
+                    </button>
+                    <span style={{
+                      fontWeight: 700, minWidth: '22px', textAlign: 'center',
+                      fontSize: '0.9rem', color: '#1e3a5f',
+                    }}>
+                      {item.qty}
+                    </span>
+                    <button onClick={() => updateQty(item.id, item.qty + 1)} style={qtyBtn}>
+                      <FiPlus size={11} />
+                    </button>
+                    <button onClick={() => removeFromCart(item.id)}
+                      style={{ ...qtyBtn, color: '#e53e3e' }}>
+                      <FiTrash2 size={11} />
+                    </button>
+                  </div>
                 </div>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '0.3rem' }}>
-                  <button onClick={() => updateQty(item.id, item.qty - 1)} style={qtyBtn}>
-                    <FiMinus size={11} />
-                  </button>
-                  <span style={{
-                    fontWeight: 700, minWidth: '22px', textAlign: 'center',
-                    fontSize: '0.9rem', color: '#1e3a5f',
-                  }}>
-                    {item.qty}
-                  </span>
-                  <button onClick={() => updateQty(item.id, item.qty + 1)} style={qtyBtn}>
-                    <FiPlus size={11} />
-                  </button>
-                  <button onClick={() => removeFromCart(item.id)}
-                    style={{ ...qtyBtn, color: '#e53e3e' }}>
-                    <FiTrash2 size={11} />
-                  </button>
-                </div>
-              </div>
-            ))
+              );
+            })
           )}
         </div>
 
         <div style={{
           padding: '1.25rem 1.5rem',
-          background: 'linear-gradient(180deg, #f7fbff, white)',
-          borderTop: '1px solid rgba(190,227,248,0.6)',
+          background: '#f7fbff',
+          borderTop: '1px solid #bee3f8',
         }}>
           <Row label="Subtotal" value={subtotal} />
           <Row label="IVA (16%)" value={tax} />

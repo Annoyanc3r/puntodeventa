@@ -181,10 +181,10 @@ export default function SubscriptionsPage() {
           }}
         >
           {[
-            { icon: '🔒', text: 'Pago 100% seguro' },
-            { icon: '↩️', text: 'Garantía de 30 días' },
-            { icon: '⚡', text: 'Activación inmediata' },
-            { icon: '💬', text: 'Soporte 24/7' },
+            { icon: '', text: 'Pago 100% seguro' },
+            { icon: '', text: 'Garantía de 30 días' },
+            { icon: '', text: 'Activación inmediata' },
+            { icon: '', text: 'Soporte 24/7' },
           ].map((item, i) => (
             <div
               key={i}

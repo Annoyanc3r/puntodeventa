@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { products as initialProducts, categories } from '../data/products';
+import { getProductIcon } from '../data/productIcons';
 import { FiPlus, FiEdit2, FiTrash2, FiSave, FiX } from 'react-icons/fi';
 
 export default function InventoryPage() {
@@ -13,7 +14,7 @@ export default function InventoryPage() {
     if (editing) {
       setItems(items.map(i => i.id === editing.id ? { ...i, ...form, price: parseFloat(form.price) } : i));
     } else {
-      setItems([...items, { ...form, id: Date.now(), price: parseFloat(form.price), image: '📦' }]);
+      setItems([...items, { ...form, id: Date.now(), price: parseFloat(form.price), image: '' }]);
     }
     resetForm();
   };
@@ -42,14 +43,15 @@ export default function InventoryPage() {
       {/* Encabezado */}
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
         <div>
-          <h1 style={{ fontSize: '1.75rem', fontWeight: 700, color: 'var(--primary-800)' }}>
+          <h1 style={{ fontSize: '1.75rem', fontWeight: 700, color: '#1e3a5f' }}>
             📦 Gestión de Inventario
           </h1>
           <p style={{ color: '#718096', marginTop: '0.25rem' }}>
             {items.length} productos registrados
           </p>
         </div>
-        <button className="btn btn-primary" onClick={() => { resetForm(); setShowForm(true); }} style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+        <button className="btn btn-primary" onClick={() => { resetForm(); setShowForm(true); }}
+          style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
           <FiPlus /> Agregar Producto
         </button>
       </div>
@@ -58,10 +60,11 @@ export default function InventoryPage() {
       {showForm && (
         <div style={{
           background: 'white', borderRadius: '1rem', padding: '1.5rem',
-          boxShadow: 'var(--shadow-lg)', borderLeft: '4px solid var(--primary-500)',
+          boxShadow: '0 4px 12px rgba(0,0,0,0.08)',
+          borderLeft: '4px solid #3182ce',
         }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '1rem' }}>
-            <h3 style={{ color: 'var(--primary-800)' }}>
+            <h3 style={{ color: '#1e3a5f' }}>
               {editing ? '✏️ Editar Producto' : '➕ Nuevo Producto'}
             </h3>
             <button onClick={resetForm} style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#a0aec0' }}>
@@ -100,10 +103,10 @@ export default function InventoryPage() {
       )}
 
       {/* Tabla */}
-      <div style={{ background: 'white', borderRadius: '1rem', overflow: 'hidden', boxShadow: 'var(--shadow-md)' }}>
+      <div style={{ background: 'white', borderRadius: '1rem', overflow: 'hidden', boxShadow: '0 4px 12px rgba(0,0,0,0.08)' }}>
         <table style={{ width: '100%', borderCollapse: 'collapse' }}>
           <thead>
-            <tr style={{ background: 'var(--primary-800)', color: 'white' }}>
+            <tr style={{ background: '#102a43', color: 'white' }}>
               <th style={thStyle}>Producto</th>
               <th style={thStyle}>Categoría</th>
               <th style={thStyle}>Descripción</th>
@@ -112,35 +115,46 @@ export default function InventoryPage() {
             </tr>
           </thead>
           <tbody>
-            {items.map(item => (
-              <tr key={item.id} style={{ borderBottom: '1px solid var(--primary-50)' }}>
-                <td style={tdStyle}>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-                    <span style={{ fontSize: '1.5rem' }}>{item.image}</span>
-                    <span style={{ fontWeight: 600, color: 'var(--primary-800)' }}>{item.name}</span>
-                  </div>
-                </td>
-                <td style={tdStyle}>
-                  <span style={{
-                    background: 'var(--primary-50)', color: 'var(--primary-700)',
-                    padding: '0.25rem 0.75rem', borderRadius: '1rem',
-                    fontSize: '0.8rem', fontWeight: 600,
-                  }}>{item.category}</span>
-                </td>
-                <td style={{ ...tdStyle, color: '#718096', fontSize: '0.9rem' }}>{item.description || '—'}</td>
-                <td style={{ ...tdStyle, fontWeight: 700, color: 'var(--primary-600)' }}>${item.price.toFixed(2)}</td>
-                <td style={tdStyle}>
-                  <div style={{ display: 'flex', gap: '0.5rem' }}>
-                    <button onClick={() => handleEdit(item)} style={iconBtn}>
-                      <FiEdit2 size={14} />
-                    </button>
-                    <button onClick={() => handleDelete(item.id)} style={{ ...iconBtn, color: 'var(--danger)' }}>
-                      <FiTrash2 size={14} />
-                    </button>
-                  </div>
-                </td>
-              </tr>
-            ))}
+            {items.map(item => {
+              const { Icon, color } = getProductIcon(item);
+
+              return (
+                <tr key={item.id} style={{ borderBottom: '1px solid #ebf8ff' }}>
+                  <td style={tdStyle}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+                      <div style={{
+                        width: '40px', height: '40px',
+                        borderRadius: '0.5rem',
+                        background: '#ebf8ff',
+                        display: 'flex', alignItems: 'center', justifyContent: 'center',
+                      }}>
+                        <Icon size={20} color={color} />
+                      </div>
+                      <span style={{ fontWeight: 600, color: '#1e3a5f' }}>{item.name}</span>
+                    </div>
+                  </td>
+                  <td style={tdStyle}>
+                    <span style={{
+                      background: '#ebf8ff', color: '#2c5282',
+                      padding: '0.25rem 0.75rem', borderRadius: '1rem',
+                      fontSize: '0.8rem', fontWeight: 600,
+                    }}>{item.category}</span>
+                  </td>
+                  <td style={{ ...tdStyle, color: '#718096', fontSize: '0.9rem' }}>{item.description || '—'}</td>
+                  <td style={{ ...tdStyle, fontWeight: 700, color: '#3182ce' }}>${item.price.toFixed(2)}</td>
+                  <td style={tdStyle}>
+                    <div style={{ display: 'flex', gap: '0.5rem' }}>
+                      <button onClick={() => handleEdit(item)} style={iconBtn}>
+                        <FiEdit2 size={14} />
+                      </button>
+                      <button onClick={() => handleDelete(item.id)} style={{ ...iconBtn, color: '#e53e3e' }}>
+                        <FiTrash2 size={14} />
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+              );
+            })}
           </tbody>
         </table>
       </div>
@@ -148,7 +162,7 @@ export default function InventoryPage() {
   );
 }
 
-const labelStyle = { display: 'block', fontSize: '0.85rem', fontWeight: 600, color: 'var(--primary-700)', marginBottom: '0.35rem' };
+const labelStyle = { display: 'block', fontSize: '0.85rem', fontWeight: 600, color: '#2c5282', marginBottom: '0.35rem' };
 const thStyle = { padding: '1rem', textAlign: 'left', fontSize: '0.85rem', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.5px' };
 const tdStyle = { padding: '1rem' };
-const iconBtn = { background: 'var(--primary-50)', border: 'none', padding: '0.5rem', borderRadius: '0.5rem', cursor: 'pointer', color: 'var(--primary-600)', display: 'flex', alignItems: 'center', justifyContent: 'center' };
+const iconBtn = { background: '#ebf8ff', border: 'none', padding: '0.5rem', borderRadius: '0.5rem', cursor: 'pointer', color: '#3182ce', display: 'flex', alignItems: 'center', justifyContent: 'center' };

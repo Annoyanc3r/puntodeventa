@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { FiMapPin, FiSave, FiPlus, FiTrash2 } from 'react-icons/fi';
+import { FiMapPin, FiSave, FiTrash2 } from 'react-icons/fi';
 
 export default function BranchesPage() {
   const [branches, setBranches] = useState([
@@ -16,7 +16,7 @@ export default function BranchesPage() {
   return (
     <div style={{ maxWidth: '900px', margin: '0 auto', display: 'flex', flexDirection: 'column', gap: '2rem' }}>
       <div>
-        <h1 style={{ fontSize: '1.75rem', fontWeight: 700, color: 'var(--primary-800)' }}>
+        <h1 style={{ fontSize: '1.75rem', fontWeight: 700, color: '#1e3a5f' }}>
           🏢 Creación de Sucursal
         </h1>
         <p style={{ color: '#718096', marginTop: '0.25rem' }}>
@@ -26,8 +26,8 @@ export default function BranchesPage() {
 
       <form onSubmit={handleSubmit} style={{
         background: 'white', borderRadius: '1rem', padding: '2rem',
-        boxShadow: 'var(--shadow-lg)',
-        borderTop: '4px solid var(--primary-500)',
+        boxShadow: '0 10px 30px rgba(0,0,0,0.12)',
+        borderTop: '4px solid #3182ce',
       }}>
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1.25rem' }}>
           <div>
@@ -59,24 +59,24 @@ export default function BranchesPage() {
       </form>
 
       <div style={{ display: 'grid', gap: '1rem' }}>
-        <h3 style={{ color: 'var(--primary-800)' }}>Sucursales Registradas</h3>
+        <h3 style={{ color: '#1e3a5f' }}>Sucursales Registradas</h3>
         {branches.map(b => (
           <div key={b.id} style={{
             background: 'white', borderRadius: '1rem', padding: '1.5rem',
-            boxShadow: 'var(--shadow-md)',
+            boxShadow: '0 4px 12px rgba(0,0,0,0.08)',
             display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start',
           }}>
             <div style={{ display: 'flex', gap: '1rem' }}>
               <div style={{
                 width: '48px', height: '48px', borderRadius: '0.75rem',
-                background: 'linear-gradient(135deg, var(--primary-400), var(--primary-600))',
+                background: '#4299e1',
                 display: 'flex', alignItems: 'center', justifyContent: 'center',
                 color: 'white', fontSize: '1.25rem',
               }}>
                 <FiMapPin />
               </div>
               <div>
-                <h4 style={{ color: 'var(--primary-800)', fontWeight: 600 }}>{b.nombre}</h4>
+                <h4 style={{ color: '#1e3a5f', fontWeight: 600 }}>{b.nombre}</h4>
                 <p style={{ fontSize: '0.85rem', color: '#718096', marginTop: '0.25rem' }}>
                   #{b.num} · {b.direccion}
                 </p>
@@ -85,7 +85,7 @@ export default function BranchesPage() {
               </div>
             </div>
             <button onClick={() => setBranches(branches.filter(x => x.id !== b.id))}
-              style={{ background: 'var(--primary-50)', border: 'none', padding: '0.5rem', borderRadius: '0.5rem', cursor: 'pointer', color: 'var(--danger)' }}>
+              style={{ background: '#ebf8ff', border: 'none', padding: '0.5rem', borderRadius: '0.5rem', cursor: 'pointer', color: '#e53e3e' }}>
               <FiTrash2 size={14} />
             </button>
           </div>
@@ -95,4 +95,4 @@ export default function BranchesPage() {
   );
 }
 
-const labelStyle = { display: 'block', fontSize: '0.85rem', fontWeight: 600, color: 'var(--primary-700)', marginBottom: '0.35rem' };
+const labelStyle = { display: 'block', fontSize: '0.85rem', fontWeight: 600, color: '#2c5282', marginBottom: '0.35rem' };
