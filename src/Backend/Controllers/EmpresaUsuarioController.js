@@ -26,6 +26,11 @@ const obtenerEmpresaUsuarioPorId = async (req, res) => {
     }
 };
 
+
+const obtenerEmpresaUsuarioPorUsuario = async (req,res) =>{
+
+};
+
 // Crea una empresa y usuario
 const crearEmpresaUsuario = async (req, res) => {
     try {

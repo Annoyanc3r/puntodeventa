@@ -16,14 +16,15 @@ export default function LoginPage() {
     setCargando(true);
     try {
       const { token, usuario } = await login(email, password);
-      localStorage.setItem('token', token);
-      localStorage.setItem('usuario', JSON.stringify(usuario));
+      sessionStorage.setItem('token', token);
+      sessionStorage.setItem('usuario', JSON.stringify(usuario));
       const { verificacion } = await verificarSubscripcion(usuario.email);
+
+      
 
       if (verificacion) navigate('/pos', { replace: true });
       else navigate('/suscripciones', { replace: true });
 
-      
       
     } catch (err) {
       setError(err.message);

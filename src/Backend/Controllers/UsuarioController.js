@@ -166,7 +166,7 @@ const verificarSubscripcion = async (req, res) => {
   try {
     const { email } = req.params;
 
-    // ✅ validar el valor, no el objeto
+    // validar el valor, no el objeto
     if (!email || typeof email !== 'string' || !email.includes('@')) {
       return res.status(400).json({
         verificacion: false,
@@ -175,12 +175,12 @@ const verificarSubscripcion = async (req, res) => {
       });
     }
 
-    // ✅ normalizar
+    // normalizar
     const emailNormalizado = email.toLowerCase().trim();
 
     const usuario = await Usuario.findOne({ email: emailNormalizado }).select('_id email').lean();
 
-    // ✅ 200, no 404: "no existe" = "no tiene suscripción", no es error HTTP
+    // 200, no 404: "no existe" = "no tiene suscripción", no es error HTTP
     if (!usuario) {
       console.log('[verificarSubscripcion] usuario no encontrado:', emailNormalizado);
       return res.status(200).json({
@@ -213,7 +213,7 @@ const verificarSubscripcion = async (req, res) => {
       subscripcion: subscripcionActiva || null,
     });
   } catch (error) {
-    // ✅ sin esto, cualquier fallo de Mongo cuelga la request
+    // sin esto, cualquier fallo de Mongo cuelga la request
     console.error('[verificarSubscripcion]', error);
     return res.status(500).json({
       verificacion: false,

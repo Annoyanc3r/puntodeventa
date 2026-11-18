@@ -8,6 +8,10 @@ export const login = async (email, password) => {
     body: JSON.stringify({ email, password }),
   });
   const data = await res.json();
+
+  sessionStorage.setItem("user_Email", data.usuario.email);
+  sessionStorage.setItem("user_ID", data.usuario._id);
+  
   if (!res.ok) throw new Error(data.msg || data.error || 'Error al iniciar sesión');
   return data;
 };

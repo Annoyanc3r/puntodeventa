@@ -6,8 +6,12 @@ const {
     obtenerSucursalPorId,
     crearSucursal,
     modificarSucursal,
-    desactivarSucursal
+    desactivarSucursal,
+    crearSucursalDesdeUsuario,
+    obtenerSucursalesPorUsuario
 } = require('../Controllers/SucursalController');
+
+
 
 router.get('/', listarSucursales);
 router.get('/empresa/:empresaId', sucursalesPorEmpresa);
@@ -15,5 +19,8 @@ router.get('/:id', obtenerSucursalPorId);
 router.post('/', crearSucursal);
 router.put('/:id', modificarSucursal);
 router.delete('/:id', desactivarSucursal);
+
+router.post('/Sucursal_Usuario', crearSucursalDesdeUsuario);
+router.get('/Sucursal_Usuario/:ID_usuario', obtenerSucursalesPorUsuario);
 
 module.exports = router;

@@ -18,8 +18,9 @@ export default function Sidebar() {
   const navigate = useNavigate();
   
     const handleLogout = () => {
-      localStorage.removeItem('token');
-      localStorage.removeItem('usuario');
+      sessionStorage.removeItem('token');
+      sessionStorage.removeItem('usuario');
+      
       navigate('/login');
     };
 

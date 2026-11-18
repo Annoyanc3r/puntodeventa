@@ -2,11 +2,15 @@ import { useState, useEffect } from 'react';
 import { FiUser, FiMapPin, FiCreditCard, FiLogOut, FiCheck } from 'react-icons/fi';
 
 // ==== DATOS DE PRUEBA (para que se vea funcionando) ====
-const USUARIO_PRUEBA = {
-  nombre: 'Admin POS',
-  email: 'admin@posblue.com',
+
+
+
+var USUARIO_PRUEBA = {
+  nombre: 'Default POS',
+  email: 'Default@posblue.com',
   rol: 'Administrador',
 };
+
 
 const SUCURSAL_PRUEBA = {
   nombre: 'Sucursal Centro',
@@ -41,6 +45,20 @@ const PLANES = [
 ];
 
 export default function ProfilePage() {
+  
+  if (sessionStorage.getItem("usuario")) {
+  // Restaura el contenido al campo de texto
+  var usuario_Session = JSON.parse(sessionStorage.getItem('usuario'));
+
+    USUARIO_PRUEBA = {
+    nombre: usuario_Session.nombre,
+    email: usuario_Session.email,
+    rol: usuario_Session.rol,
+  };
+
+  }
+
+
   const [usuario, setUsuario] = useState(USUARIO_PRUEBA);
   const [sucursal, setSucursal] = useState(SUCURSAL_PRUEBA);
   const [planSeleccionado, setPlanSeleccionado] = useState('1_ano');
@@ -92,7 +110,7 @@ export default function ProfilePage() {
 
           <div style={{ borderTop: '1px solid #ebf8ff', paddingTop: '1rem' }}>
             <FilaDato etiqueta="Rol" valor={usuario.rol} />
-            <FilaDato etiqueta="Estado" valor="Activo ✅" />
+            <FilaDato etiqueta="Estado" valor="Activo" />
           </div>
         </div>
 
@@ -202,7 +220,7 @@ export default function ProfilePage() {
                     cursor: 'pointer', fontFamily: 'inherit',
                   }}
                 >
-                  {estaSeleccionado ? 'Plan Actual ✅' : 'Seleccionar'}
+                  {estaSeleccionado ? 'Plan Actual ' : 'Seleccionar'}
                 </button>
               </div>
             );
@@ -211,6 +229,7 @@ export default function ProfilePage() {
       </div>
 
       {/* ====== BOTÓN DE CERRAR SESIÓN ====== */}
+      {/*
       <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
         <button
           onClick={cerrarSesion}
@@ -220,7 +239,7 @@ export default function ProfilePage() {
           <FiLogOut /> Cerrar Sesión
         </button>
       </div>
-
+*/}
     </div>
   );
 }
