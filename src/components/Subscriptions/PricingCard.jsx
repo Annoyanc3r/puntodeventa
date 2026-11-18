@@ -8,6 +8,8 @@ export default function PricingCard({
   highlight = false,
   popular = false,
   buttonLabel = 'Sign Up',
+  onSelect, // 1. Recibir la función como prop
+
 }) {
   return (
     <div

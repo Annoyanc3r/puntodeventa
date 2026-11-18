@@ -1,14 +1,9 @@
-import { NavLink } from 'react-router-dom';
+import { NavLink, useNavigate } from 'react-router-dom';
 import {
-  FiShoppingCart,
-  FiBox,
-  FiMapPin,
-  FiCreditCard,
-  FiUser,
-  FiLogOut,
+  FiShoppingCart, FiBox, FiMapPin, FiCreditCard,
+  FiUser, FiLogOut,
 } from 'react-icons/fi';
 
-// Aquí están los enlaces que se ven en el menú de la izquierda
 const links = [
   { to: '/pos',           label: 'Punto de Venta', icon: <FiShoppingCart /> },
   { to: '/inventario',    label: 'Inventario',     icon: <FiBox /> },
@@ -17,7 +12,18 @@ const links = [
   { to: '/perfil',        label: 'Mi Perfil',      icon: <FiUser /> },
 ];
 
+
 export default function Sidebar() {
+
+  const navigate = useNavigate();
+  
+    const handleLogout = () => {
+      localStorage.removeItem('token');
+      localStorage.removeItem('usuario');
+      navigate('/login');
+    };
+
+
   return (
     <aside style={{
       width: '260px',
@@ -30,6 +36,8 @@ export default function Sidebar() {
       boxShadow: '4px 0 24px rgba(10, 25, 41, 0.15)',
       flexShrink: 0,                // Evita que se encoja
     }}>
+
+      
 
       {/* ===== LOGO DE ARRIBA ===== */}
       <div style={{ padding: '0 1.5rem 2.5rem' }}>
@@ -47,7 +55,7 @@ export default function Sidebar() {
             fontSize: '1.3rem',
             boxShadow: '0 4px 12px rgba(66,153,225,0.4)',
           }}>
-            🚀
+            
           </div>
 
           {/* Nombre de la app (aquí puedes cambiarlo) */}
@@ -126,6 +134,7 @@ export default function Sidebar() {
       }}>
         <button
           className="btn"
+          onClick={handleLogout}
           style={{
             width: '100%',
             background: 'rgba(229, 62, 62, 0.15)',

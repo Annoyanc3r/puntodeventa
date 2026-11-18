@@ -6,10 +6,13 @@ const {
     crearUsuario,
     actualizarUsuario,
     eliminarUsuario,
-    loginUsuario
+    loginUsuario,
+    verificarSubscripcion,
+
 } = require('../Controllers/UsuarioController');
 
 
+router.get('/checkSubscription/:email', verificarSubscripcion);
 router.post('/login', loginUsuario); 
 
 router.get('/', listarUsuarios);

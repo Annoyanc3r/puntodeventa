@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { FiMail, FiLock, FiLogIn } from 'react-icons/fi';
-import { login } from '../services/authService';
+import { login,verificarSubscripcion } from '../services/authService';
 
 export default function LoginPage() {
   const navigate = useNavigate();
@@ -18,7 +18,13 @@ export default function LoginPage() {
       const { token, usuario } = await login(email, password);
       localStorage.setItem('token', token);
       localStorage.setItem('usuario', JSON.stringify(usuario));
-      navigate('/pos', { replace: true });
+      const { verificacion } = await verificarSubscripcion(usuario.email);
+
+      if (verificacion) navigate('/pos', { replace: true });
+      else navigate('/suscripciones', { replace: true });
+
+      
+      
     } catch (err) {
       setError(err.message);
     } finally {

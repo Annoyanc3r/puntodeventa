@@ -29,7 +29,7 @@ export default function Topbar() {
           fontWeight: 700,
           color: '#1e3a5f',
         }}>
-          ¡Bienvenido de nuevo! 👋
+          Bienvenido de nuevo
         </h2>
         <p style={{
           fontSize: '0.8rem',

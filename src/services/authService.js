@@ -31,3 +31,24 @@ export const register = async ({ nombre, email, password }) => {
   }
   return data;
 };
+
+export const verificarSubscripcion = async (email) => {
+  if (!email || !email.includes('@')) {
+    throw new Error('Email inválido');
+  }
+
+  const res = await fetch(`${API}/checkSubscription/${encodeURIComponent(email)}`, {
+    method: 'GET',
+    headers: { 'Content-Type': 'application/json' },
+  });
+
+  const data = await res.json();
+
+  // El backend devuelve 200 con verificacion:false cuando no hay empresa/suscripción.
+  // Solo tratamos como error los 4xx/5xx reales.
+  if (!res.ok) {
+    throw new Error(data.msg || data.error || 'Error al verificar suscripción');
+  }
+
+  return data;
+};
