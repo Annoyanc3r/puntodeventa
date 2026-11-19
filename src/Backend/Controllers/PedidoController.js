@@ -1,4 +1,6 @@
 const Pedido = require('../Models/Pedido');
+const Sucursal = require('../Models/Sucursal');
+const Empleado = require('../Models/Empleado');
 
 // Listar pedidos
 const listarPedidos = async (req, res) => {
@@ -18,7 +20,7 @@ const pedidosPorSucursalYEstado = async (req, res) => {
     try {
         const filtro = { sucursal: req.params.sucursalId };
         if (req.query.estado) filtro.estado = req.query.estado;
-        
+
         const pedidos = await Pedido.find(filtro)
             .populate('empleado', 'nombre')
             .populate('cliente', 'nombre');
@@ -42,10 +44,39 @@ const obtenerPedidoPorId = async (req, res) => {
     }
 };
 
-// Crear pedido
+// Crear pedido (con respaldo para sucursal y empleado si no vienen explícitos)
 const crearPedido = async (req, res) => {
     try {
-        const nuevo = await Pedido.create(req.body);
+        let sucursalId = req.body.sucursal;
+        if (!sucursalId) {
+            const sucDefault = await Sucursal.findOne({ activo: true });
+            if (!sucDefault) {
+                return res.status(400).json({ error: 'No hay sucursal activa registrada para crear el pedido.' });
+            }
+            sucursalId = sucDefault._id;
+        }
+
+let empleadoId = req.body.empleado;
+        if (!empleadoId) {
+            let empDefault = await Empleado.findOne();
+            if (!empDefault) {
+                empDefault = await Empleado.create({
+                    nombre: 'Cajero POS',
+                    sucursal: sucursalId,
+                    puesto: 'Cajero',
+                    activo: true
+                });
+            }
+            empleadoId = empDefault._id;
+        }
+
+        const nuevo = await Pedido.create({
+            ...req.body,
+            sucursal: sucursalId,
+            empleado: empleadoId,
+            estado: req.body.estado || 'pagado'
+        });
+
         res.status(201).json(nuevo);
     } catch (error) {
         res.status(400).json({ error: error.message });
@@ -56,8 +87,8 @@ const crearPedido = async (req, res) => {
 const cambiarEstadoPedido = async (req, res) => {
     try {
         const actualizado = await Pedido.findByIdAndUpdate(
-            req.params.id, 
-            req.body, 
+            req.params.id,
+            req.body,
             { new: true, runValidators: true }
         );
         if (!actualizado) return res.status(404).json({ error: 'Pedido no encontrado' });

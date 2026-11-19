@@ -1,6 +1,12 @@
+import { useState } from 'react';
 import PricingCard from '../components/Subscriptions/PricingCard';
 
+const API_BASE = process.env.REACT_APP_API_URL || 'http://localhost:4000';
+
 export default function SubscriptionsPage() {
+  const [estadoMsg, setEstadoMsg] = useState(null);
+  const [cargandoPlan, setCargandoPlan] = useState(false);
+
   const plans = [
     {
       title: '7 días gratis',
@@ -44,6 +50,44 @@ export default function SubscriptionsPage() {
       buttonLabel: 'Mejor Valor',
     },
   ];
+
+  const handleSeleccionarPlan = async (plan) => {
+    setCargandoPlan(true);
+    setEstadoMsg(null);
+    try {
+      const token = sessionStorage.getItem('token');
+      const headers = {
+        'Content-Type': 'application/json',
+        ...(token ? { Authorization: `Bearer ${token}` } : {}),
+      };
+
+      const res = await fetch(`${API_BASE}/api/empresa-subscripcion`, {
+        method: 'POST',
+        headers,
+        body: JSON.stringify({
+          plan: plan.title,
+          precio: Number(plan.price),
+        }),
+      });
+
+      const data = await res.json();
+      if (!res.ok) {
+        throw new Error(data.error || data.msg || 'No se pudo activar la suscripción');
+      }
+
+      setEstadoMsg({
+        tipo: 'ok',
+        texto: `Suscripción "${plan.title}" activada y guardada en la base de datos.`,
+      });
+    } catch (err) {
+      setEstadoMsg({
+        tipo: 'error',
+        texto: err.message || 'Error al cambiar de suscripción',
+      });
+    } finally {
+      setCargandoPlan(false);
+    }
+  };
 
   return (
     <div
@@ -148,6 +192,24 @@ export default function SubscriptionsPage() {
             Comienza gratis y escala cuando lo necesites. Sin contratos
             forzosos, cancela cuando quieras.
           </p>
+
+          {estadoMsg && (
+            <div
+              style={{
+                marginTop: '1.5rem',
+                display: 'inline-block',
+                padding: '0.75rem 1.25rem',
+                borderRadius: '0.75rem',
+                fontWeight: 600,
+                fontSize: '0.9rem',
+                background: estadoMsg.tipo === 'ok' ? '#e6fffa' : '#fff5f5',
+                color: estadoMsg.tipo === 'ok' ? '#234e52' : '#9b2c2c',
+                border: `1px solid ${estadoMsg.tipo === 'ok' ? '#81e6d9' : '#feb2b2'}`,
+              }}
+            >
+              {cargandoPlan ? 'Actualizando suscripción...' : estadoMsg.texto}
+            </div>
+          )}
         </div>
 
         {/* Grid de planes */}
@@ -161,7 +223,12 @@ export default function SubscriptionsPage() {
           }}
         >
           {plans.map((plan, i) => (
-            <PricingCard key={i} {...plan} />
+            <PricingCard
+              key={i}
+              {...plan}
+              buttonLabel={cargandoPlan ? 'Procesando...' : plan.buttonLabel}
+              onSelect={handleSeleccionarPlan}
+            />
           ))}
         </div>
 
@@ -181,10 +248,10 @@ export default function SubscriptionsPage() {
           }}
         >
           {[
-            { icon: '', text: 'Pago 100% seguro' },
-            { icon: '', text: 'Garantía de 30 días' },
-            { icon: '', text: 'Activación inmediata' },
-            { icon: '', text: 'Soporte 24/7' },
+            { icon: '🔒', text: 'Pago 100% seguro' },
+            { icon: '🛡️', text: 'Garantía de 30 días' },
+            { icon: '⚡', text: 'Activación inmediata' },
+            { icon: '💬', text: 'Soporte 24/7' },
           ].map((item, i) => (
             <div
               key={i}
@@ -219,6 +286,7 @@ export default function SubscriptionsPage() {
             Nuestro equipo está listo para ayudarte a elegir el plan ideal.
           </p>
           <button
+            type="button"
             className="btn btn-primary"
             style={{
               padding: '0.9rem 2rem',

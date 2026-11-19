@@ -23,6 +23,79 @@ export default function POSPage() {
   const [activeCategory, setActiveCategory] = useState(fallbackCategories[0] || '');
   const [search, setSearch] = useState('');
   const { cart, addToCart, removeFromCart, updateQty, clearCart, subtotal, tax, total } = useCart();
+const [avisoPOS, setAvisoPOS] = useState(null);
+  const [cobrando, setCobrando] = useState(false);
+
+  const registrarPedido = async (metodoPago = 'efectivo') => {
+    if (cart.length === 0) {
+      setAvisoPOS({ tipo: 'error', texto: 'Agrega al menos un producto al carrito.' });
+      return;
+    }
+
+    setCobrando(true);
+    setAvisoPOS(null);
+
+    try {
+      const apiBase = process.env.REACT_APP_API_URL || 'http://localhost:4000';
+      const userId =
+        JSON.parse(sessionStorage.getItem('usuario') || 'null')?._id ||
+        sessionStorage.getItem('user_ID');
+
+      let sucursalId = null;
+      if (userId) {
+        const resSuc = await fetch(`${apiBase}/api/sucursal/Sucursal_Usuario/${userId}`);
+        if (resSuc.ok) {
+          const dataSuc = await resSuc.json();
+          sucursalId = dataSuc.sucursales?.[0]?._id || null;
+        }
+      }
+
+      const detalles = cart.map((item) => ({
+        producto: item.id,
+        nombreProducto: item.name,
+        cantidad: Number(item.qty),
+        precioUnitario: Number(item.price),
+        subtotal: Number(item.price) * Number(item.qty),
+      }));
+
+      const res = await fetch(`${apiBase}/api/pedidos`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          ...(sucursalId ? { sucursal: sucursalId } : {}),
+          estado: 'pagado',
+          total: Number(total.toFixed(2)),
+          detalles,
+          pagos: [
+            {
+              metodo: metodoPago,
+              monto: Number(total.toFixed(2)),
+              referencia: `POS-${Date.now()}`,
+            },
+          ],
+        }),
+      });
+
+      const data = await res.json();
+      if (!res.ok) {
+        throw new Error(data.error || data.msg || 'No se pudo registrar el pedido');
+      }
+
+      clearCart();
+      setAvisoPOS({
+        tipo: 'ok',
+        texto: `Venta registrada (${metodoPago}) por $${Number(total).toFixed(2)}.`,
+      });
+    } catch (err) {
+      setAvisoPOS({
+        tipo: 'error',
+        texto: err.message || 'Error al procesar el cobro',
+      });
+    } finally {
+      setCobrando(false);
+    }
+  };
+
 
   useEffect(() => {
     const cargarPOS = async () => {
@@ -307,7 +380,7 @@ export default function POSPage() {
           )}
         </div>
 
-        <div style={{
+<div style={{
           padding: '1.25rem 1.5rem',
           background: '#f7fbff',
           borderTop: '1px solid #bee3f8',
@@ -324,18 +397,49 @@ export default function POSPage() {
               ${total.toFixed(2)}
             </span>
           </div>
+
+          {avisoPOS && (
+            <div style={{
+              marginTop: '0.75rem',
+              padding: '0.6rem 0.75rem',
+              borderRadius: '0.6rem',
+              fontSize: '0.82rem',
+              fontWeight: 600,
+              background: avisoPOS.tipo === 'ok' ? '#e6fffa' : '#fff5f5',
+              color: avisoPOS.tipo === 'ok' ? '#234e52' : '#9b2c2c',
+              border: `1px solid ${avisoPOS.tipo === 'ok' ? '#81e6d9' : '#feb2b2'}`,
+            }}>
+              {avisoPOS.texto}
+            </div>
+          )}
         </div>
 
         <div style={{ padding: '0 1.5rem 1.5rem', display: 'grid', gap: '0.6rem' }}>
-          <button className="btn btn-accent" onClick={clearCart}
-            style={{ padding: '1rem', borderRadius: '0.85rem', fontSize: '1rem' }}>
-            <FiDollarSign /> Cobrar ${total.toFixed(2)}
+          <button
+            type="button"
+            className="btn btn-accent"
+            disabled={cobrando}
+            onClick={() => registrarPedido('efectivo')}
+            style={{ padding: '1rem', borderRadius: '0.85rem', fontSize: '1rem' }}
+          >
+            <FiDollarSign /> {cobrando ? 'Procesando...' : `Cobrar $${total.toFixed(2)}`}
           </button>
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.6rem' }}>
-            <button className="btn btn-primary" style={{ padding: '0.75rem' }}>
+            <button
+              type="button"
+              className="btn btn-primary"
+              disabled={cobrando}
+              onClick={() => registrarPedido('tarjeta')}
+              style={{ padding: '0.75rem' }}
+            >
               <FiCreditCard /> Tarjeta
             </button>
-            <button className="btn btn-warning" style={{ padding: '0.75rem' }}>
+            <button
+              type="button"
+              className="btn btn-warning"
+              onClick={() => window.print()}
+              style={{ padding: '0.75rem' }}
+            >
               <FiPrinter /> Imprimir
             </button>
           </div>

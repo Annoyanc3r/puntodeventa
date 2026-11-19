@@ -8,8 +8,7 @@ export default function PricingCard({
   highlight = false,
   popular = false,
   buttonLabel = 'Sign Up',
-  onSelect, // 1. Recibir la función como prop
-
+  onSelect,
 }) {
   return (
     <div
@@ -185,6 +184,8 @@ export default function PricingCard({
 
       {/* Botón */}
       <button
+        type="button"
+        onClick={() => onSelect && onSelect({ title, price, period })}
         className={highlight ? 'btn btn-accent' : 'btn btn-primary'}
         style={{
           width: '100%',
@@ -194,6 +195,7 @@ export default function PricingCard({
           letterSpacing: '0.5px',
           fontSize: '0.95rem',
           transition: 'all 0.2s ease',
+          cursor: 'pointer',
         }}
       >
         {buttonLabel}
