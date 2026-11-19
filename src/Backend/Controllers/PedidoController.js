@@ -1,11 +1,17 @@
 const Pedido = require('../Models/Pedido');
 const Sucursal = require('../Models/Sucursal');
 const Empleado = require('../Models/Empleado');
+const { obtenerContextoUsuario } = require('../Utils/empresaScope');
 
-// Listar pedidos
+// Listar pedidos (filtrados por sucursales de la empresa del usuario si aplica)
 const listarPedidos = async (req, res) => {
     try {
-        const pedidos = await Pedido.find()
+        const { empresaId, sucursalIds } = await obtenerContextoUsuario(req);
+        const filtro = {};
+        if (empresaId) {
+            filtro.sucursal = { $in: sucursalIds };
+        }
+        const pedidos = await Pedido.find(filtro)
             .populate('sucursal', 'nombre')
             .populate('empleado', 'nombre')
             .populate('cliente', 'nombre');
@@ -47,18 +53,24 @@ const obtenerPedidoPorId = async (req, res) => {
 // Crear pedido (con respaldo para sucursal y empleado si no vienen explícitos)
 const crearPedido = async (req, res) => {
     try {
+        const { empresaId, sucursalIds } = await obtenerContextoUsuario(req);
+
         let sucursalId = req.body.sucursal;
         if (!sucursalId) {
-            const sucDefault = await Sucursal.findOne({ activo: true });
-            if (!sucDefault) {
-                return res.status(400).json({ error: 'No hay sucursal activa registrada para crear el pedido.' });
+            if (empresaId && sucursalIds.length > 0) {
+                sucursalId = sucursalIds[0];
+            } else {
+                const sucDefault = await Sucursal.findOne({ activo: true });
+                if (!sucDefault) {
+                    return res.status(400).json({ error: 'No hay sucursal activa registrada para crear el pedido.' });
+                }
+                sucursalId = sucDefault._id;
             }
-            sucursalId = sucDefault._id;
         }
 
-let empleadoId = req.body.empleado;
+        let empleadoId = req.body.empleado;
         if (!empleadoId) {
-            let empDefault = await Empleado.findOne();
+            let empDefault = await Empleado.findOne({ sucursal: sucursalId }) || await Empleado.findOne();
             if (!empDefault) {
                 empDefault = await Empleado.create({
                     nombre: 'Cajero POS',

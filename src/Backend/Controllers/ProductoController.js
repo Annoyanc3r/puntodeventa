@@ -1,9 +1,15 @@
 const Producto = require('../Models/Producto');
+const { obtenerContextoUsuario } = require('../Utils/empresaScope');
 
-// Listar productos activos
+// Listar productos activos (filtrados por empresa del usuario si aplica)
 const listarProductos = async (req, res) => {
     try {
-        const productos = await Producto.find({ activo: true }).populate('categoria', 'nombre');
+        const { empresaId } = await obtenerContextoUsuario(req);
+        const filtro = { activo: true };
+        if (empresaId) {
+            filtro.empresa = empresaId;
+        }
+        const productos = await Producto.find(filtro).populate('categoria', 'nombre');
         res.json(productos);
     } catch (error) {
         res.status(500).json({ error: error.message });
@@ -13,7 +19,12 @@ const listarProductos = async (req, res) => {
 // Productos por categoría
 const productosPorCategoria = async (req, res) => {
     try {
-        const productos = await Producto.find({ categoria: req.params.categoriaId, activo: true });
+        const { empresaId } = await obtenerContextoUsuario(req);
+        const filtro = { categoria: req.params.categoriaId, activo: true };
+        if (empresaId) {
+            filtro.empresa = empresaId;
+        }
+        const productos = await Producto.find(filtro);
         res.json(productos);
     } catch (error) {
         res.status(500).json({ error: error.message });
@@ -34,7 +45,12 @@ const obtenerProductoPorId = async (req, res) => {
 // Crear producto
 const crearProducto = async (req, res) => {
     try {
-        const nuevo = await Producto.create(req.body);
+        const { empresaId } = await obtenerContextoUsuario(req);
+        const payload = { ...req.body };
+        if (empresaId && !payload.empresa) {
+            payload.empresa = empresaId;
+        }
+        const nuevo = await Producto.create(payload);
         res.status(201).json(nuevo);
     } catch (error) {
         res.status(400).json({ error: error.message });

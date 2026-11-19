@@ -1,9 +1,15 @@
 const Categoria = require('../Models/Categoria');
+const { obtenerContextoUsuario } = require('../Utils/empresaScope');
 
-// Listar categorías activas
+// Listar categorías activas (filtradas por empresa del usuario si aplica)
 const listarCategorias = async (req, res) => {
     try {
-        const categorias = await Categoria.find({ activo: true });
+        const { empresaId } = await obtenerContextoUsuario(req);
+        const filtro = { activo: true };
+        if (empresaId) {
+            filtro.empresa = empresaId;
+        }
+        const categorias = await Categoria.find(filtro);
         res.json(categorias);
     } catch (error) {
         res.status(500).json({ error: error.message });
@@ -24,7 +30,12 @@ const obtenerCategoriaPorId = async (req, res) => {
 // Crear categoría
 const crearCategoria = async (req, res) => {
     try {
-        const nueva = await Categoria.create(req.body);
+        const { empresaId } = await obtenerContextoUsuario(req);
+        const payload = { ...req.body };
+        if (empresaId && !payload.empresa) {
+            payload.empresa = empresaId;
+        }
+        const nueva = await Categoria.create(payload);
         res.status(201).json(nueva);
     } catch (error) {
         res.status(400).json({ error: error.message });

@@ -75,7 +75,9 @@ export default function InventoryPage() {
 
       try {
         const apiBase = process.env.REACT_APP_API_URL || 'http://localhost:4000';
-        const resPedidos = await fetch(`${apiBase}/api/pedidos`);
+        const token = sessionStorage.getItem('token');
+        const headers = token ? { Authorization: `Bearer ${token}` } : {};
+        const resPedidos = await fetch(`${apiBase}/api/pedidos`, { headers });
         if (resPedidos.ok) {
           const pedidosData = await resPedidos.json();
           const acumulador = {};
@@ -341,7 +343,7 @@ export default function InventoryPage() {
             onClick={exportarInventarioExcel}
             style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}
           >
-            <FiDownload /> Exportar Excel
+            <FiDownload/> Exportar Excel
           </button>
           <button
             type="button"
@@ -352,7 +354,7 @@ export default function InventoryPage() {
             }}
             style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}
           >
-            <FiPlus /> Agregar Producto
+            <FiPlus/> Agregar Producto
           </button>
         </div>
       </div>
@@ -372,7 +374,7 @@ export default function InventoryPage() {
       >
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '0.75rem' }}>
           <h3 style={{ color: '#1e3a5f', display: 'flex', alignItems: 'center', gap: '0.4rem', margin: 0 }}>
-            <FiTag /> Categorías
+            <FiTag/> Categorías
           </h3>
 
           <form onSubmit={handleAddCategory} style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
@@ -384,7 +386,7 @@ export default function InventoryPage() {
               style={{ minWidth: '200px' }}
             />
             <button type="submit" className="btn btn-accent" disabled={catLoading} style={{ display: 'flex', alignItems: 'center', gap: '0.35rem' }}>
-              <FiPlus /> {catLoading ? 'Guardando...' : 'Agregar'}
+              <FiPlus/> {catLoading ? 'Guardando...' : 'Agregar'}
             </button>
           </form>
         </div>
@@ -424,7 +426,7 @@ export default function InventoryPage() {
                   alignItems: 'center',
                 }}
               >
-                <FiTrash2 size={13} />
+                <FiTrash2 size={13}/>
               </button>
             </span>
           ))}
@@ -462,7 +464,7 @@ export default function InventoryPage() {
               {editing ? '✏️ Editar Producto' : '➕ Nuevo Producto'}
             </h3>
             <button type="button" onClick={resetForm} style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#a0aec0' }}>
-              <FiX size={20} />
+              <FiX size="{20}"/>
             </button>
           </div>
           <form onSubmit={handleSubmit} style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
@@ -490,7 +492,7 @@ export default function InventoryPage() {
             </div>
             <div style={{ display: 'flex', alignItems: 'flex-end', gap: '0.5rem' }}>
               <button type="submit" className="btn btn-accent" style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                <FiSave /> {editing ? 'Actualizar' : 'Guardar'}
+                <FiSave/> {editing ? 'Actualizar' : 'Guardar'}
               </button>
               <button type="button" className="btn" onClick={resetForm} style={{ background: '#edf2f7', color: '#4a5568' }}>
                 Cancelar
@@ -561,10 +563,10 @@ export default function InventoryPage() {
                   <td style={tdStyle}>
                     <div style={{ display: 'flex', gap: '0.5rem' }}>
                       <button type="button" onClick={() => handleEdit(item)} style={iconBtn}>
-                        <FiEdit2 size={14} />
+                        <FiEdit2 size={14}/>
                       </button>
                       <button type="button" onClick={() => handleDelete(item)} style={{ ...iconBtn, color: '#e53e3e' }}>
-                        <FiTrash2 size={14} />
+                        <FiTrash2 size={14}/>
                       </button>
                     </div>
                   </td>
