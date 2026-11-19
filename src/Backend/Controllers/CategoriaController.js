@@ -5,10 +5,9 @@ const { obtenerContextoUsuario } = require('../Utils/empresaScope');
 const listarCategorias = async (req, res) => {
     try {
         const { empresaId } = await obtenerContextoUsuario(req);
-        const filtro = { activo: true };
-        if (empresaId) {
-            filtro.empresa = empresaId;
-        }
+        const filtro = empresaId
+            ? { activo: true, empresa: empresaId }
+            : { activo: true, $or: [{ empresa: { $exists: false } }, { empresa: null }] };
         const categorias = await Categoria.find(filtro);
         res.json(categorias);
     } catch (error) {

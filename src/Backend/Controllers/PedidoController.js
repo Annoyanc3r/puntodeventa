@@ -7,11 +7,10 @@ const { obtenerContextoUsuario } = require('../Utils/empresaScope');
 const listarPedidos = async (req, res) => {
     try {
         const { empresaId, sucursalIds } = await obtenerContextoUsuario(req);
-        const filtro = {};
-        if (empresaId) {
-            filtro.sucursal = { $in: sucursalIds };
+        if (!empresaId || sucursalIds.length === 0) {
+            return res.json([]);
         }
-        const pedidos = await Pedido.find(filtro)
+        const pedidos = await Pedido.find({ sucursal: { $in: sucursalIds } })
             .populate('sucursal', 'nombre')
             .populate('empleado', 'nombre')
             .populate('cliente', 'nombre');
@@ -19,7 +18,7 @@ const listarPedidos = async (req, res) => {
     } catch (error) {
         res.status(500).json({ error: error.message });
     }
-};
+};;
 
 // Pedidos por sucursal y estado
 const pedidosPorSucursalYEstado = async (req, res) => {

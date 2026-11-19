@@ -7,11 +7,11 @@ import BranchesPage from './pages/BranchesPage';
 import SettingsPage from './pages/SettingsPage';
 import LoginPage from './pages/LoginPage';
 import RegisterPage from './pages/RegisterPage';
-import ProtectedRoute from './components/ProtectedRoute';
+import ProtectedRoute from './components/ProtectedRoutes';
 import SubscriptionsPage from './pages/SubscriptionsPage';
 
-
 import './styles/theme.css';
+
 export default function App() {
   return (
     <CartProvider>
@@ -19,14 +19,19 @@ export default function App() {
         <Routes>
           <Route path="/login" element={<LoginPage />} />
           <Route path="/register" element={<RegisterPage />} />
-          <Route element={<Layout />}>
-            <Route path="/pos" element={<POSPage />} />
-            <Route path="/inventario" element={<InventoryPage />} />
-            <Route path="/sucursales" element={<BranchesPage />} />
-            <Route path="/ajustes" element={<SettingsPage />} />
-            <Route path="/" element={<Navigate to="/pos" />} />
-            <Route path="/suscripciones" element={<SubscriptionsPage />} />
+
+          <Route element={<ProtectedRoute />}>
+            <Route element={<Layout />}>
+              <Route path="/pos" element={<POSPage />} />
+              <Route path="/inventario" element={<InventoryPage />} />
+              <Route path="/sucursales" element={<BranchesPage />} />
+              <Route path="/ajustes" element={<SettingsPage />} />
+              <Route path="/suscripciones" element={<SubscriptionsPage />} />
+            </Route>
           </Route>
+
+          <Route path="/" element={<Navigate to="/pos" replace />} />
+          <Route path="*" element={<Navigate to="/login" replace />} />
         </Routes>
       </BrowserRouter>
     </CartProvider>

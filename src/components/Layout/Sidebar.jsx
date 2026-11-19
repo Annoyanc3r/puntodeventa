@@ -1,4 +1,4 @@
-import { NavLink, useNavigate } from 'react-router-dom';
+import { NavLink } from 'react-router-dom';
 import {
   FiShoppingCart, FiBox, FiMapPin, FiCreditCard,
   FiUser, FiLogOut,
@@ -12,39 +12,38 @@ const links = [
   { to: '/perfil',        label: 'Mi Perfil',      icon: <FiUser /> },
 ];
 
-
 export default function Sidebar() {
-
-  const navigate = useNavigate();
-  
-    const handleLogout = () => {
+  const handleLogout = () => {
+    try {
       sessionStorage.removeItem('token');
       sessionStorage.removeItem('usuario');
-      
-      navigate('/login');
-    };
+      sessionStorage.removeItem('user_Email');
+      sessionStorage.removeItem('user_ID');
+      sessionStorage.removeItem('ultimo_ticket_pos');
+      sessionStorage.clear();
+      localStorage.removeItem('token');
+    } catch {
+      // Ignorar errores de almacenamiento
+    }
 
+    window.location.replace('/login');
+  };
 
   return (
     <aside style={{
       width: '260px',
-      height: '100vh',              // Ocupa todo el alto de la pantalla
-      background: '#102a43',        // Color sólido (sin degradado)
+      height: '100vh',
+      background: '#102a43',
       color: 'white',
       display: 'flex',
       flexDirection: 'column',
       padding: '1.75rem 0',
       boxShadow: '4px 0 24px rgba(10, 25, 41, 0.15)',
-      flexShrink: 0,                // Evita que se encoja
+      flexShrink: 0,
     }}>
-
-      
-
       {/* ===== LOGO DE ARRIBA ===== */}
       <div style={{ padding: '0 1.5rem 2.5rem' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-
-          {/* Cuadrito con el icono 🚀 */}
           <div style={{
             width: '42px',
             height: '42px',
@@ -56,10 +55,8 @@ export default function Sidebar() {
             fontSize: '1.3rem',
             boxShadow: '0 4px 12px rgba(66,153,225,0.4)',
           }}>
-            
           </div>
 
-          {/* Nombre de la app (aquí puedes cambiarlo) */}
           <div>
             <h1 style={{
               fontSize: '1.25rem',
@@ -100,7 +97,7 @@ export default function Sidebar() {
               padding: '0.9rem 1rem',
               borderRadius: '0.75rem',
               color: isActive ? 'white' : '#a0c4e8',
-              background: isActive ? '#2c5282' : 'transparent', // Color sólido (sin degradado)
+              background: isActive ? '#2c5282' : 'transparent',
               textDecoration: 'none',
               fontWeight: isActive ? 600 : 500,
               fontSize: '0.9rem',
@@ -108,7 +105,6 @@ export default function Sidebar() {
               borderLeft: isActive ? '3px solid #4299e1' : '3px solid transparent',
             })}
             onMouseEnter={e => {
-              // Si no está activo, se ilumina al pasar el mouse
               if (e.currentTarget.getAttribute('aria-current') !== 'page') {
                 e.currentTarget.style.background = 'rgba(255,255,255,0.05)';
                 e.currentTarget.style.color = 'white';
@@ -134,6 +130,7 @@ export default function Sidebar() {
         marginTop: '1rem',
       }}>
         <button
+          type="button"
           className="btn"
           onClick={handleLogout}
           style={{

@@ -5,10 +5,9 @@ const { obtenerContextoUsuario } = require('../Utils/empresaScope');
 const listarProductos = async (req, res) => {
     try {
         const { empresaId } = await obtenerContextoUsuario(req);
-        const filtro = { activo: true };
-        if (empresaId) {
-            filtro.empresa = empresaId;
-        }
+        const filtro = empresaId
+            ? { activo: true, empresa: empresaId }
+            : { activo: true, $or: [{ empresa: { $exists: false } }, { empresa: null }] };
         const productos = await Producto.find(filtro).populate('categoria', 'nombre');
         res.json(productos);
     } catch (error) {
