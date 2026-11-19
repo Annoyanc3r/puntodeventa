@@ -1,17 +1,58 @@
-import { useState } from 'react';
-import { categories, products } from '../data/products';
+import { useState, useEffect } from 'react';
+import { categories as fallbackCategories, products as fallbackProducts } from '../data/products';
+import { obtenerCategorias } from '../services/categoriaService';
+import { obtenerProductos } from '../services/productoService';
 import { useCart } from '../context/CartContext';
 import { getProductIcon } from '../data/productIcons';
 import { FiSearch, FiPlus, FiMinus, FiTrash2, FiCreditCard, FiDollarSign, FiPrinter } from 'react-icons/fi';
 
+const normalizarProductoPOS = (p) => ({
+  id: p._id || p.id,
+  name: p.nombre || p.name,
+  price: Number(p.precioBase ?? p.price ?? 0),
+  category:
+    typeof p.categoria === 'object' && p.categoria !== null
+      ? p.categoria.nombre
+      : p.categoria || p.category || '',
+  image: p.imagen || p.image || '',
+});
+
 export default function POSPage() {
-  const [activeCategory, setActiveCategory] = useState('Burgers');
+  const [categoryNames, setCategoryNames] = useState(fallbackCategories);
+  const [productList, setProductList] = useState(fallbackProducts);
+  const [activeCategory, setActiveCategory] = useState(fallbackCategories[0] || '');
   const [search, setSearch] = useState('');
   const { cart, addToCart, removeFromCart, updateQty, clearCart, subtotal, tax, total } = useCart();
 
-  const filtered = products.filter(p =>
-    p.category === activeCategory &&
-    p.name.toLowerCase().includes(search.toLowerCase())
+  useEffect(() => {
+    const cargarPOS = async () => {
+      try {
+        const cats = await obtenerCategorias();
+        if (cats.length > 0) {
+          const nombres = cats.map((c) => c.nombre);
+          setCategoryNames(nombres);
+          setActiveCategory(nombres[0]);
+        }
+      } catch {
+        // categorias por defecto (cuando no se han dado de alta en la base de datos)
+      }
+
+      try {
+        const prods = await obtenerProductos();
+        if (prods.length > 0) {
+          setProductList(prods.map(normalizarProductoPOS));
+        }
+      } catch {
+        // productos por defecto (cuando no se han dado de alta en la base de datos)
+      }
+    };
+    cargarPOS();
+  }, []);
+
+  const filtered = productList.filter(
+    (p) =>
+      (!activeCategory || p.category === activeCategory) &&
+      p.name.toLowerCase().includes(search.toLowerCase())
   );
 
   return (
@@ -49,7 +90,7 @@ export default function POSPage() {
 
         {/* Categorías */}
         <div style={{ display: 'flex', gap: '0.5rem', overflowX: 'auto', paddingBottom: '0.5rem' }}>
-          {categories.map(cat => (
+          {categoryNames.map(cat => (
             <button
               key={cat}
               onClick={() => setActiveCategory(cat)}
@@ -130,7 +171,7 @@ export default function POSPage() {
                 </h4>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                   <p style={{ fontSize: '1.1rem', fontWeight: 800, color: '#3182ce' }}>
-                    ${product.price.toFixed(2)}
+                    ${Number(product.price).toFixed(2)}
                   </p>
                   <div style={{
                     width: '28px', height: '28px', borderRadius: '8px',
@@ -239,7 +280,7 @@ export default function POSPage() {
                       {item.name}
                     </p>
                     <p style={{ fontSize: '0.85rem', color: '#3182ce', fontWeight: 700, marginTop: '0.15rem' }}>
-                      ${(item.price * item.qty).toFixed(2)}
+                      ${(Number(item.price) * item.qty).toFixed(2)}
                     </p>
                   </div>
                   <div style={{ display: 'flex', alignItems: 'center', gap: '0.3rem' }}>

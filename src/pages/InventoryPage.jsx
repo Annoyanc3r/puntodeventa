@@ -2,16 +2,42 @@ import { useState, useEffect } from 'react';
 import { products as initialProducts, categories as fallbackCategories } from '../data/products';
 import { getProductIcon } from '../data/productIcons';
 import { obtenerCategorias, crearCategoria, eliminarCategoria } from '../services/categoriaService';
+import {
+  obtenerProductos,
+  crearProducto,
+  modificarProducto,
+  eliminarProducto,
+} from '../services/productoService';
 import { FiPlus, FiEdit2, FiTrash2, FiSave, FiX, FiTag } from 'react-icons/fi';
 
+const normalizarProducto = (p) => ({
+  id: p._id || p.id,
+  name: p.nombre || p.name,
+  description: p.descripcion || p.description || '',
+  price: Number(p.precioBase ?? p.price ?? 0),
+  category:
+    typeof p.categoria === 'object' && p.categoria !== null
+      ? p.categoria.nombre
+      : p.categoria || p.category || '',
+  categoriaId:
+    typeof p.categoria === 'object' && p.categoria !== null
+      ? p.categoria._id
+      : p.categoriaId || null,
+  image: p.imagen || p.image || '',
+  isLocal: Boolean(p.isLocal),
+});
+
 export default function InventoryPage() {
-  const [items, setItems] = useState(initialProducts);
+  const [items, setItems] = useState(
+    initialProducts.map((p) => ({ ...p, isLocal: true }))
+  );
   const [categoryList, setCategoryList] = useState(
     fallbackCategories.map((name, idx) => ({ _id: `local-${idx}`, nombre: name }))
   );
   const [newCategoryName, setNewCategoryName] = useState('');
   const [catLoading, setCatLoading] = useState(false);
   const [catMessage, setCatMessage] = useState('');
+  const [prodError, setProdError] = useState('');
 
   const [showForm, setShowForm] = useState(false);
   const [editing, setEditing] = useState(null);
@@ -23,21 +49,30 @@ export default function InventoryPage() {
   });
 
   useEffect(() => {
-    const cargarCats = async () => {
+    const cargarDatos = async () => {
       try {
-        const data = await obtenerCategorias();
-        if (data.length > 0) {
-          setCategoryList(data);
+        const cats = await obtenerCategorias();
+        if (cats.length > 0) {
+          setCategoryList(cats);
           setForm((prev) => ({
             ...prev,
-            category: prev.category || data[0].nombre,
+            category: prev.category || cats[0].nombre,
           }));
         }
       } catch {
-        // Si aún no hay categorías en BD o la ruta difiere, conserva las de respaldo
+        // Mantiene categorías de respaldo si falla o aún no hay
+      }
+
+      try {
+        const prods = await obtenerProductos();
+        if (prods.length > 0) {
+          setItems(prods.map(normalizarProducto));
+        }
+      } catch {
+        // Mantiene productos locales de respaldo si aún no hay en BD
       }
     };
-    cargarCats();
+    cargarDatos();
   }, []);
 
   const handleAddCategory = async (e) => {
@@ -80,14 +115,69 @@ export default function InventoryPage() {
     }
   };
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    if (editing) {
-      setItems(items.map((i) => (i.id === editing.id ? { ...i, ...form, price: parseFloat(form.price) } : i)));
-    } else {
-      setItems([...items, { ...form, id: Date.now(), price: parseFloat(form.price), image: '' }]);
+  const resolverCategoriaId = (nombreCategoria) => {
+    const encontrada = categoryList.find((c) => c.nombre === nombreCategoria);
+    if (encontrada && encontrada._id && !String(encontrada._id).startsWith('local-')) {
+      return encontrada._id;
     }
-    resetForm();
+    return null;
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setProdError('');
+
+    let categoriaId = resolverCategoriaId(form.category);
+
+    // Si eligió una categoría local que aún no existe en Mongo, la creamos primero para tener su ObjectId
+    if (!categoriaId && form.category) {
+      try {
+        const creada = await crearCategoria({ nombre: form.category });
+        if (creada?._id) {
+          categoriaId = creada._id;
+          setCategoryList((prev) => [...prev, creada]);
+        }
+      } catch {
+        // Si ya existía o falla, se manejará en la validación del backend
+      }
+    }
+
+    if (!categoriaId) {
+      setProdError('Selecciona o crea una categoría válida guardada en la base de datos.');
+      return;
+    }
+
+    const payload = {
+      nombre: form.name.trim(),
+      descripcion: form.description.trim(),
+      precioBase: parseFloat(form.price),
+      categoria: categoriaId,
+    };
+
+    try {
+      if (editing && editing.id && !editing.isLocal) {
+        const actualizada = await modificarProducto(editing.id, payload);
+        const norm = normalizarProducto({
+          ...actualizada,
+          categoria: actualizada.categoria?.nombre ? actualizada.categoria : { _id: categoriaId, nombre: form.category },
+        });
+        setItems((prev) => prev.map((i) => (i.id === editing.id ? norm : i)));
+      } else {
+        const creado = await crearProducto(payload);
+        const norm = normalizarProducto({
+          ...creado,
+          categoria: { _id: categoriaId, nombre: form.category },
+        });
+        if (editing?.isLocal) {
+          setItems((prev) => prev.map((i) => (i.id === editing.id ? norm : i)));
+        } else {
+          setItems((prev) => [norm, ...prev]);
+        }
+      }
+      resetForm();
+    } catch (err) {
+      setProdError(err.message);
+    }
   };
 
   const resetForm = () => {
@@ -99,6 +189,7 @@ export default function InventoryPage() {
     });
     setEditing(null);
     setShowForm(false);
+    setProdError('');
   };
 
   const handleEdit = (item) => {
@@ -112,9 +203,17 @@ export default function InventoryPage() {
     setShowForm(true);
   };
 
-  const handleDelete = (id) => {
-    if (window.confirm('¿Eliminar este producto?')) {
-      setItems(items.filter((i) => i.id !== id));
+  const handleDelete = async (item) => {
+    setProdError('');
+    if (!window.confirm('¿Eliminar este producto?')) return;
+
+    try {
+      if (item.id && !item.isLocal) {
+        await eliminarProducto(item.id);
+      }
+      setItems((prev) => prev.filter((i) => i.id !== item.id));
+    } catch (err) {
+      setProdError(err.message);
     }
   };
 
@@ -215,6 +314,21 @@ export default function InventoryPage() {
           ))}
         </div>
       </div>
+
+      {prodError && (
+        <div
+          style={{
+            background: '#fff5f5',
+            border: '1px solid #feb2b2',
+            color: '#c53030',
+            padding: '0.75rem 1rem',
+            borderRadius: '0.5rem',
+            fontSize: '0.9rem',
+          }}
+        >
+          {prodError}
+        </div>
+      )}
 
       {/* Formulario de Producto */}
       {showForm && (
@@ -327,7 +441,7 @@ export default function InventoryPage() {
                       <button onClick={() => handleEdit(item)} style={iconBtn}>
                         <FiEdit2 size={14} />
                       </button>
-                      <button onClick={() => handleDelete(item.id)} style={{ ...iconBtn, color: '#e53e3e' }}>
+                      <button onClick={() => handleDelete(item)} style={{ ...iconBtn, color: '#e53e3e' }}>
                         <FiTrash2 size={14} />
                       </button>
                     </div>
