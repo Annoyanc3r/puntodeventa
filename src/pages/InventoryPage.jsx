@@ -8,7 +8,7 @@ import {
   modificarProducto,
   eliminarProducto,
 } from '../services/productoService';
-import { FiPlus, FiEdit2, FiTrash2, FiSave, FiX, FiTag } from 'react-icons/fi';
+import { FiPlus, FiEdit2, FiTrash2, FiSave, FiX, FiTag, FiDownload } from 'react-icons/fi';
 
 const normalizarProducto = (p) => ({
   id: p._id || p.id,
@@ -38,6 +38,7 @@ export default function InventoryPage() {
   const [catLoading, setCatLoading] = useState(false);
   const [catMessage, setCatMessage] = useState('');
   const [prodError, setProdError] = useState('');
+  const [vendidosPorProducto, setVendidosPorProducto] = useState({});
 
   const [showForm, setShowForm] = useState(false);
   const [editing, setEditing] = useState(null);
@@ -70,6 +71,32 @@ export default function InventoryPage() {
         }
       } catch {
         // Mantiene productos locales de respaldo si aún no hay en BD
+      }
+
+      try {
+        const apiBase = process.env.REACT_APP_API_URL || 'http://localhost:4000';
+        const resPedidos = await fetch(`${apiBase}/api/pedidos`);
+        if (resPedidos.ok) {
+          const pedidosData = await resPedidos.json();
+          const acumulador = {};
+          (Array.isArray(pedidosData) ? pedidosData : []).forEach((pedido) => {
+            if (pedido.estado === 'cancelado') return;
+            (pedido.detalles || []).forEach((det) => {
+              const cant = Number(det.cantidad || 0);
+              const prodId = typeof det.producto === 'object' ? det.producto?._id : det.producto;
+              if (prodId) {
+                acumulador[String(prodId)] = (acumulador[String(prodId)] || 0) + cant;
+              }
+              if (det.nombreProducto) {
+                const keyNombre = `nombre:${String(det.nombreProducto).trim().toLowerCase()}`;
+                acumulador[keyNombre] = (acumulador[keyNombre] || 0) + cant;
+              }
+            });
+          });
+          setVendidosPorProducto(acumulador);
+        }
+      } catch {
+        // Si no hay pedidos aún, queda en 0
       }
     };
     cargarDatos();
@@ -217,6 +244,84 @@ export default function InventoryPage() {
     }
   };
 
+  const exportarInventarioExcel = () => {
+    const fechaReporte = new Date().toLocaleString();
+    const totalProductos = items.length;
+    let totalVendidos = 0;
+    let totalIngresos = 0;
+
+    const filas = items
+      .map((item) => {
+        const vendidos =
+          vendidosPorProducto[String(item.id)] ??
+          vendidosPorProducto[`nombre:${String(item.name || '').trim().toLowerCase()}`] ??
+          0;
+        const precio = Number(item.price || 0);
+        const ingresoItem = precio * Number(vendidos);
+
+        totalVendidos += Number(vendidos);
+        totalIngresos += ingresoItem;
+
+        return `
+          <tr>
+            <td>${String(item.name || '').replace(/</g, '<')}</td>
+            <td>${String(item.category || '').replace(/</g, '<')}</td>
+            <td>${String(item.description || '—').replace(/</g, '<')}</td>
+            <td style="mso-number-format:'$#,##0.00';">$${precio.toFixed(2)}</td>
+            <td style="text-align:center;">${vendidos}</td>
+            <td style="mso-number-format:'$#,##0.00';">$${ingresoItem.toFixed(2)}</td>
+          </tr>
+        `;
+      })
+      .join('');
+
+    const contenidoExcel = `
+      <html xmlns:o="urn:schemas-microsoft-com:office:office"
+            xmlns:x="urn:schemas-microsoft-com:office:excel"
+            xmlns="http://www.w3.org/TR/REC-html40">
+      <head>
+        <meta charset="UTF-8" />
+      </head>
+      <body>
+        <table border="1" style="border-collapse: collapse; font-family: Arial, sans-serif;">
+          <tr>
+            <th colspan="6" style="background:#102a43; color:#ffffff; font-size:16px; padding:10px;">
+              REPORTE DE INVENTARIO Y VENTAS - POS BLUE (${fechaReporte})
+            </th>
+          </tr>
+          <tr style="background:#2c5282; color:#ffffff; font-weight:bold;">
+            <th>Producto</th>
+            <th>Categoría</th>
+            <th>Descripción</th>
+            <th>Precio Unitario</th>
+            <th>Unidades Vendidas</th>
+            <th>Ingresos por Ventas</th>
+          </tr>
+          ${filas}
+          <tr style="background:#ebf8ff; font-weight:bold;">
+            <td colspan="3">TOTALES (${totalProductos} productos)</td>
+            <td>—</td>
+            <td style="text-align:center;">${totalVendidos}</td>
+            <td style="mso-number-format:'$#,##0.00';">$${totalIngresos.toFixed(2)}</td>
+          </tr>
+        </table>
+      </body>
+      </html>
+    `;
+
+    const blob = new Blob(['\ufeff', contenidoExcel], {
+      type: 'application/vnd.ms-excel;charset=utf-8;',
+    });
+    const url = URL.createObjectURL(blob);
+    const enlace = document.createElement('a');
+    enlace.href = url;
+    enlace.download = `Reporte_Inventario_${new Date().toISOString().slice(0, 10)}.xls`;
+    document.body.appendChild(enlace);
+    enlace.click();
+    document.body.removeChild(enlace);
+    URL.revokeObjectURL(url);
+  };
+
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
       {/* Encabezado */}
@@ -229,16 +334,27 @@ export default function InventoryPage() {
             {items.length} productos registrados
           </p>
         </div>
-        <button
-          className="btn btn-primary"
-          onClick={() => {
-            resetForm();
-            setShowForm(true);
-          }}
-          style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}
-        >
-          <FiPlus /> Agregar Producto
-        </button>
+        <div style={{ display: 'flex', gap: '0.75rem', alignItems: 'center' }}>
+          <button
+            type="button"
+            className="btn btn-accent"
+            onClick={exportarInventarioExcel}
+            style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}
+          >
+            <FiDownload /> Exportar Excel
+          </button>
+          <button
+            type="button"
+            className="btn btn-primary"
+            onClick={() => {
+              resetForm();
+              setShowForm(true);
+            }}
+            style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}
+          >
+            <FiPlus /> Agregar Producto
+          </button>
+        </div>
       </div>
 
       {/* Alta y baja de Categorías */}
@@ -345,7 +461,7 @@ export default function InventoryPage() {
             <h3 style={{ color: '#1e3a5f' }}>
               {editing ? '✏️ Editar Producto' : '➕ Nuevo Producto'}
             </h3>
-            <button onClick={resetForm} style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#a0aec0' }}>
+            <button type="button" onClick={resetForm} style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#a0aec0' }}>
               <FiX size={20} />
             </button>
           </div>
@@ -393,12 +509,17 @@ export default function InventoryPage() {
               <th style={thStyle}>Categoría</th>
               <th style={thStyle}>Descripción</th>
               <th style={thStyle}>Precio</th>
+              <th style={thStyle}>Vendidos</th>
               <th style={thStyle}>Acciones</th>
             </tr>
           </thead>
           <tbody>
             {items.map((item) => {
               const { Icon, color } = getProductIcon({ name: item.name, category: item.category });
+              const vendidos =
+                vendidosPorProducto[String(item.id)] ??
+                vendidosPorProducto[`nombre:${String(item.name || '').trim().toLowerCase()}`] ??
+                0;
 
               return (
                 <tr key={item.id} style={{ borderBottom: '1px solid #ebf8ff' }}>
@@ -436,12 +557,13 @@ export default function InventoryPage() {
                   </td>
                   <td style={{ ...tdStyle, color: '#718096', fontSize: '0.9rem' }}>{item.description || '—'}</td>
                   <td style={{ ...tdStyle, fontWeight: 700, color: '#3182ce' }}>${Number(item.price).toFixed(2)}</td>
+                  <td style={{ ...tdStyle, fontWeight: 700, color: '#2b6cb0' }}>{vendidos}</td>
                   <td style={tdStyle}>
                     <div style={{ display: 'flex', gap: '0.5rem' }}>
-                      <button onClick={() => handleEdit(item)} style={iconBtn}>
+                      <button type="button" onClick={() => handleEdit(item)} style={iconBtn}>
                         <FiEdit2 size={14} />
                       </button>
-                      <button onClick={() => handleDelete(item)} style={{ ...iconBtn, color: '#e53e3e' }}>
+                      <button type="button" onClick={() => handleDelete(item)} style={{ ...iconBtn, color: '#e53e3e' }}>
                         <FiTrash2 size={14} />
                       </button>
                     </div>
