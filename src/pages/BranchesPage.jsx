@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { FiMapPin, FiSave, FiTrash2 } from 'react-icons/fi';
-import { crearSucursal, obtenerSucursales } from '../services/sucursalService';
+import { crearSucursal, obtenerSucursales, darBajaSucursal } from '../services/sucursalService';
 
 // Helper local: obtiene el ID del usuario logueado
 const getUsuarioId = () => {
@@ -76,8 +76,15 @@ export default function BranchesPage() {
     }
   };
 
-  const handleDelete = (id) => {
-    setBranches(branches.filter((x) => x.id !== id));
+ const handleDelete = async (id) => {
+    setError('');
+    try {
+      const ID_usuario = getUsuarioId();
+      await darBajaSucursal(id, ID_usuario);
+      setBranches((prev) => prev.filter((x) => x.id !== id));
+    } catch (err) {
+      setError(err.message);
+    }
   };
 
   return (

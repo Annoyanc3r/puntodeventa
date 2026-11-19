@@ -69,3 +69,31 @@ export const obtenerSucursales = async (ID_usuario) => {
 
   return data;
 };
+
+export const darBajaSucursal = async (sucursalId, ID_usuario) => {
+  if (!ID_usuario) {
+    throw new Error('No hay sesión activa. Inicia sesión nuevamente.');
+  }
+  if (!sucursalId) {
+    throw new Error('No se especificó la sucursal.');
+  }
+
+  const res = await fetch(`${API}baja/${encodeURIComponent(sucursalId)}`, {
+    method: 'PATCH',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ ID_usuario }),
+  });
+
+  const data = await res.json();
+
+  if (!res.ok) {
+    const mensaje =
+      data.msg ||
+      data.error ||
+      (data.errors && Object.values(data.errors)[0]?.message) ||
+      'Error al dar de baja la sucursal';
+    throw new Error(mensaje);
+  }
+
+  return data;
+};

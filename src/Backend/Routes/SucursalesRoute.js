@@ -8,7 +8,8 @@ const {
     modificarSucursal,
     desactivarSucursal,
     crearSucursalDesdeUsuario,
-    obtenerSucursalesPorUsuario
+    obtenerSucursalesPorUsuario,
+    darBajaSucursalPorUsuario
 } = require('../Controllers/SucursalController');
 
 
@@ -22,5 +23,6 @@ router.delete('/:id', desactivarSucursal);
 
 router.post('/Sucursal_Usuario', crearSucursalDesdeUsuario);
 router.get('/Sucursal_Usuario/:ID_usuario', obtenerSucursalesPorUsuario);
+router.patch('/baja/:id', darBajaSucursalPorUsuario);
 
 module.exports = router;

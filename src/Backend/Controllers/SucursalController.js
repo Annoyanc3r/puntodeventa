@@ -181,7 +181,7 @@ const obtenerSucursalesPorUsuario = async (req, res) => {
 
     // 2) Traer todas las sucursales de esa empresa
     const sucursales = await Sucursal
-      .find({ empresa: relacion.empresa })
+      .find({ empresa: relacion.empresa, activo: true })
       .sort({ createdAt: -1 }); // más recientes primero
 
     return res.status(200).json({
@@ -198,6 +198,47 @@ const obtenerSucursalesPorUsuario = async (req, res) => {
   }
 };
 
+const darBajaSucursalPorUsuario = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { ID_usuario } = req.body;
+
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      return res.status(400).json({ msg: 'ID de sucursal inválido' });
+    }
+    if (!ID_usuario || !mongoose.Types.ObjectId.isValid(ID_usuario)) {
+      return res.status(400).json({ msg: 'ID_usuario inválido o faltante' });
+    }
+
+    const relacion = await EmpresaUsuario.findOne({ usuario: ID_usuario });
+    if (!relacion || !relacion.empresa) {
+      return res.status(404).json({ msg: 'El usuario no tiene empresa asociada' });
+    }
+
+    const sucursal = await Sucursal.findOneAndUpdate(
+      { _id: id, empresa: relacion.empresa },
+      { activo: false },
+      { new: true }
+    );
+
+    if (!sucursal) {
+      return res.status(404).json({
+        msg: 'Sucursal no encontrada o no pertenece a tu empresa',
+      });
+    }
+
+    return res.status(200).json({
+      msg: 'Sucursal dada de baja correctamente',
+      sucursal,
+    });
+  } catch (error) {
+    console.error('Error al dar de baja sucursal:', error);
+    return res.status(500).json({
+      msg: 'Error al dar de baja la sucursal',
+      error: error.message,
+    });
+  }
+};
 
 module.exports = {
     listarSucursales,
@@ -207,5 +248,6 @@ module.exports = {
     modificarSucursal,
     desactivarSucursal,
     crearSucursalDesdeUsuario,
-    obtenerSucursalesPorUsuario
+    obtenerSucursalesPorUsuario,
+    darBajaSucursalPorUsuario
 };
