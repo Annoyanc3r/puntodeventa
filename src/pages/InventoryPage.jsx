@@ -464,7 +464,7 @@ export default function InventoryPage() {
               {editing ? '✏️ Editar Producto' : '➕ Nuevo Producto'}
             </h3>
             <button type="button" onClick={resetForm} style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#a0aec0' }}>
-              <FiX size="{20}"/>
+              <FiX size={20}/>
             </button>
           </div>
           <form onSubmit={handleSubmit} style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
